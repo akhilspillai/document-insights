@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { auth, googleProvider } from '../lib/firebase';
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signInWithPopup, linkWithPopup, signOut, signInAnonymously } from 'firebase/auth';
 
 const AuthMenu = () => {
   const [open, setOpen] = useState(false);
@@ -15,18 +15,37 @@ const AuthMenu = () => {
     return () => unsub();
   }, []);
 
+  const isAnonymous = user?.isAnonymous ?? false;
+
   const handleSignIn = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      if (user && isAnonymous) {
+        // Link anonymous account to Google account
+        await linkWithPopup(user, googleProvider);
+      } else {
+        await signInWithPopup(auth, googleProvider);
+      }
       setOpen(false);
     } catch (err) {
-      console.error('Sign-in failed', err);
+      // If linking fails (e.g., Google account already exists), sign in directly
+      if (err.code === 'auth/credential-already-in-use') {
+        try {
+          await signInWithPopup(auth, googleProvider);
+          setOpen(false);
+        } catch (signInErr) {
+          console.error('Sign-in failed', signInErr);
+        }
+      } else {
+        console.error('Sign-in failed', err);
+      }
     }
   };
 
   const handleSignOut = async () => {
     try {
       await signOut(auth);
+      // Sign in anonymously again after sign out
+      await signInAnonymously(auth);
       setOpen(false);
     } catch (err) {
       console.error('Sign-out failed', err);
@@ -68,7 +87,7 @@ const AuthMenu = () => {
         <div className="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-xl p-4 z-30">
           {loading ? (
             <p className="text-xs text-slate-400">Checking your session…</p>
-          ) : user ? (
+          ) : user && !isAnonymous ? (
             <>
               <div className="flex items-center gap-3 mb-3">
                 <div className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-semibold text-slate-100">

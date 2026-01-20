@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from 'react';
 
-const DocumentUpload = ({ onFileUpload }) => {
+const DocumentUpload = ({ onFileUpload, disabled = false }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState(null);
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
-    setIsDragging(true);
-  }, []);
+    if (!disabled) setIsDragging(true);
+  }, [disabled]);
 
   const handleDragLeave = useCallback((e) => {
     e.preventDefault();
@@ -17,9 +17,10 @@ const DocumentUpload = ({ onFileUpload }) => {
   const handleDrop = useCallback((e) => {
     e.preventDefault();
     setIsDragging(false);
-    
+    if (disabled) return;
+
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile && droppedFile.type.startsWith('application/pdf') || 
+    if (droppedFile && droppedFile.type.startsWith('application/pdf') ||
         droppedFile.type.startsWith('application/msword') ||
         droppedFile.type.startsWith('application/vnd.openxmlformats-officedocument') ||
         droppedFile.type.startsWith('text/')) {
@@ -28,23 +29,26 @@ const DocumentUpload = ({ onFileUpload }) => {
     } else {
       alert('Please upload a valid document (PDF, Word, or text file)');
     }
-  }, [onFileUpload]);
+  }, [onFileUpload, disabled]);
 
   const handleFileSelect = useCallback((e) => {
+    if (disabled) return;
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
       onFileUpload(selectedFile);
     }
-  }, [onFileUpload]);
+  }, [onFileUpload, disabled]);
 
   return (
     <div className="w-full">
       <div
         className={`relative rounded-2xl p-8 text-center transition-all duration-200 border bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 ${
-          isDragging
-            ? 'border-blue-500/70 shadow-[0_0_0_1px_rgba(59,130,246,0.6)] ring-2 ring-blue-500/40 scale-[1.01]'
-            : 'border-slate-800 hover:border-slate-600 hover:shadow-lg'
+          disabled
+            ? 'border-slate-800 opacity-60 cursor-not-allowed'
+            : isDragging
+              ? 'border-blue-500/70 shadow-[0_0_0_1px_rgba(59,130,246,0.6)] ring-2 ring-blue-500/40 scale-[1.01]'
+              : 'border-slate-800 hover:border-slate-600 hover:shadow-lg'
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -53,9 +57,10 @@ const DocumentUpload = ({ onFileUpload }) => {
         <input
           type="file"
           id="file-upload"
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          className={`absolute inset-0 w-full h-full opacity-0 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
           onChange={handleFileSelect}
           accept=".pdf,.doc,.docx,.txt"
+          disabled={disabled}
         />
         
         <div className="flex flex-col items-center space-y-4">

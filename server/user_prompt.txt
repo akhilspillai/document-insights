@@ -1,0 +1,40 @@
+Analyze the following document text.
+
+Tasks:
+1. Identify what type of document this is.
+2. Explain why the user likely received it.
+3. Extract any deadlines, amounts, or reference numbers.
+4. Clearly state what actions (if any) the user must take.
+5. Assess the risk level if the user ignores it.
+6. Point out any missing or unclear information.
+7. Suggest whether a professional (CA/lawyer/bank) is needed.
+
+Document text:
+"""
+{{EXTRACTED_TEXT}}
+"""
+
+Output strictly in the JSON format defined below.
+{
+  "document_type": "",
+  "issuer": "",
+  "summary_simple": "",
+  "why_received": "",
+  "key_details": {
+    "amounts": [],
+    "dates": [],
+    "reference_numbers": []
+  },
+  "required_actions": [
+    {
+      "action": "",
+      "deadline": "",
+      "how_to_do_it": ""
+    }
+  ],
+  "risk_level": "low | medium | high",
+  "what_happens_if_ignored": "",
+  "missing_or_unclear_info": [],
+  "professional_help_needed": "no | maybe | yes",
+  "confidence_notes": ""
+}
