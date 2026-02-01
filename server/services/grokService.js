@@ -15,22 +15,28 @@ const userPromptTemplate = fs.readFileSync(
   'utf-8'
 );
 
-// Initialize Grok client (xAI uses OpenAI-compatible API)
-const grok = new OpenAI({
-  apiKey: process.env.GROK_API_KEY,
-  baseURL: 'https://api.x.ai/v1',
-});
+// Lazily initialize Grok client (xAI uses OpenAI-compatible API)
+let grok;
+function getGrokClient() {
+  if (!grok) {
+    if (!process.env.GROK_API_KEY) {
+      throw new Error('GROK_API_KEY environment variable is not set');
+    }
+    grok = new OpenAI({
+      apiKey: process.env.GROK_API_KEY,
+      baseURL: 'https://api.x.ai/v1',
+    });
+  }
+  return grok;
+}
 
 export async function analyzeDocument(extractedText) {
-  if (!process.env.GROK_API_KEY) {
-    throw new Error('GROK_API_KEY environment variable is not set');
-  }
 
   // Replace placeholder with extracted text
   const userPrompt = userPromptTemplate.replace('{{EXTRACTED_TEXT}}', extractedText);
 
   try {
-    const response = await grok.chat.completions.create({
+    const response = await getGrokClient().chat.completions.create({
       model: 'grok-3-latest',
       messages: [
         { role: 'system', content: systemMessage },

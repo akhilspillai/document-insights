@@ -1,22 +1,17 @@
 import admin from 'firebase-admin';
 
+export function ensureAdminInitialized() {
+  if (!admin.apps.length) {
+    admin.initializeApp();
+  }
+}
+
 let db = null;
 
 function getFirestoreDb() {
   if (db) return db;
 
-  // Initialize Firebase Admin if not already initialized
-  if (!admin.apps.length) {
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: privateKey,
-      }),
-    });
-  }
+  ensureAdminInitialized();
 
   db = admin.firestore();
   return db;
@@ -52,4 +47,45 @@ export async function updateDocumentAnalysis(fileId, analysis) {
   });
 
   return { id: fileId, analysis };
+}
+
+export async function getUserDocuments(userId) {
+  const db = getFirestoreDb();
+
+  const snapshot = await db
+    .collection('documents')
+    .where('userId', '==', userId)
+    .where('analysis', '!=', null)
+    .orderBy('createdAt', 'desc')
+    .limit(20)
+    .get();
+
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    originalFilename: doc.data().originalFilename,
+    createdAt: doc.data().createdAt,
+    analysis: doc.data().analysis,
+  }));
+}
+
+export async function getUserAnalysisCount(userId) {
+  const db = getFirestoreDb();
+  const userDoc = await db.collection('users').doc(userId).get();
+  if (!userDoc.exists) return 0;
+  return userDoc.data().analysisCount || 0;
+}
+
+export async function incrementAnalysisCount(userId) {
+  const db = getFirestoreDb();
+  const userRef = db.collection('users').doc(userId);
+
+  const newCount = await db.runTransaction(async (t) => {
+    const doc = await t.get(userRef);
+    const current = doc.exists ? (doc.data().analysisCount || 0) : 0;
+    const updated = current + 1;
+    t.set(userRef, { analysisCount: updated }, { merge: true });
+    return updated;
+  });
+
+  return newCount;
 }

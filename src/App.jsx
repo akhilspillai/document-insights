@@ -1,30 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth'
-import { auth } from './lib/firebase'
+import { auth, googleProvider } from './lib/firebase'
+import { ensureGoogleSignIn } from './lib/authGate'
 import DocumentUpload from './components/DocumentUpload'
 import DocumentInsights from './components/DocumentInsights'
 import ProcessingStatus from './components/ProcessingStatus'
 import AuthMenu from './components/AuthMenu'
 
-function categorizeInsights(insights) {
-  if (!insights) return 'Informational'
-
-  // Use the new Grok response format
-  if (insights.risk_level === 'high') {
-    return 'Urgent / penalty risk'
-  }
-
-  if (insights.risk_level === 'medium' || insights.required_actions?.length > 0) {
-    return 'Action required'
-  }
-
-  return 'Informational'
-}
+const API_BASE = ''
 
 function App() {
   const [insights, setInsights] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [processingStatus, setProcessingStatus] = useState(null) // 'uploading' | 'extracting' | 'analyzing' | 'complete'
+  const [processingStatus, setProcessingStatus] = useState(null)
   const [error, setError] = useState(null)
   const [currentFileName, setCurrentFileName] = useState(null)
   const [currentFile, setCurrentFile] = useState(null)
@@ -32,6 +20,48 @@ function App() {
   const [totalAnalyzed, setTotalAnalyzed] = useState(0)
   const [user, setUser] = useState(null)
   const [authReady, setAuthReady] = useState(false)
+  const [quota, setQuota] = useState(null)
+  const [summary, setSummary] = useState({ informational: 0, actionRequired: 0, urgent: 0 })
+
+  const isGoogleUser = user && !user.isAnonymous
+
+  // Helper to get auth headers for API calls
+  const getAuthHeaders = useCallback(async () => {
+    const currentUser = auth.currentUser
+    if (!currentUser) return {}
+    const token = await currentUser.getIdToken()
+    return { Authorization: `Bearer ${token}` }
+  }, [])
+
+  // Fetch quota from backend
+  const fetchQuota = useCallback(async () => {
+    try {
+      const headers = await getAuthHeaders()
+      if (!headers.Authorization) return
+      const res = await fetch(`${API_BASE}/api/quota`, { headers })
+      if (!res.ok) return
+      const data = await res.json()
+      setQuota(data)
+    } catch (err) {
+      console.error('Failed to fetch quota:', err)
+    }
+  }, [getAuthHeaders])
+
+  // Fetch dashboard data (recent docs, total count, summary) from Firestore-backed API
+  const fetchDashboard = useCallback(async () => {
+    try {
+      const headers = await getAuthHeaders()
+      if (!headers.Authorization) return
+      const res = await fetch(`${API_BASE}/api/documents`, { headers })
+      if (!res.ok) return
+      const data = await res.json()
+      setUploads(data.documents || [])
+      setTotalAnalyzed(data.totalAnalyzed || 0)
+      setSummary(data.summary || { informational: 0, actionRequired: 0, urgent: 0 })
+    } catch (err) {
+      console.error('Failed to fetch dashboard:', err)
+    }
+  }, [getAuthHeaders])
 
   // Track authenticated user and sign in anonymously if needed
   useEffect(() => {
@@ -43,35 +73,32 @@ function App() {
         // No user signed in, sign in anonymously
         try {
           await signInAnonymously(auth)
-          // onAuthStateChanged will fire again with the anonymous user
         } catch (err) {
           console.error('Anonymous sign-in failed:', err)
-          setAuthReady(true) // Still mark as ready to not block the UI
+          setAuthReady(true)
         }
       }
     })
     return () => unsubscribe()
   }, [])
 
-  // Fetch initial count of analyzed documents from backend
+  // Fetch quota when user changes to a Google user
   useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const res = await fetch('http://localhost:4000/api/documents/count')
-        if (!res.ok) return
-        const data = await res.json()
-        if (typeof data.count === 'number') {
-          setTotalAnalyzed(data.count)
-        }
-      } catch (err) {
-        console.error('Failed to fetch analyzed documents count:', err)
-      }
+    if (isGoogleUser) {
+      fetchQuota()
+    } else {
+      setQuota(null)
     }
+  }, [isGoogleUser, fetchQuota])
 
-    fetchCount()
-  }, [])
+  // Fetch dashboard when user becomes a Google user
+  useEffect(() => {
+    if (isGoogleUser) {
+      fetchDashboard()
+    }
+  }, [isGoogleUser, fetchDashboard])
 
-  const handleFileUpload = async (file) => {
+  const handleAnalyze = async (file) => {
     setLoading(true)
     setError(null)
     setInsights(null)
@@ -80,18 +107,37 @@ function App() {
     setProcessingStatus('uploading')
 
     try {
-      // Upload file to Backblaze via server
+      // Step 1: Ensure user is signed in with Google
+      let signedInUser = user
+      if (!user || user.isAnonymous) {
+        try {
+          signedInUser = await ensureGoogleSignIn(auth, googleProvider)
+          setUser(signedInUser)
+        } catch (err) {
+          throw new Error('Google sign-in is required to analyze documents.')
+        }
+      }
+
+      // Step 2: Fetch fresh quota after sign-in
+      const token = await signedInUser.getIdToken()
+      const authHeaders = { Authorization: `Bearer ${token}` }
+
+      const quotaRes = await fetch(`${API_BASE}/api/quota`, { headers: authHeaders })
+      if (quotaRes.ok) {
+        const quotaData = await quotaRes.json()
+        setQuota(quotaData)
+        if (quotaData.remaining <= 0) {
+          throw new Error(`You have reached the limit of ${quotaData.limit} free document analyses.`)
+        }
+      }
+
+      // Step 3: Upload and analyze
       const formData = new FormData()
       formData.append('file', file)
 
-      // Get userId from state or directly from auth
-      const currentUser = user || auth.currentUser
-      if (currentUser?.uid) {
-        formData.append('userId', currentUser.uid)
-      }
-
-      const uploadRes = await fetch('http://localhost:4000/api/upload', {
+      const uploadRes = await fetch(`${API_BASE}/api/upload`, {
         method: 'POST',
+        headers: authHeaders,
         body: formData,
       })
 
@@ -102,8 +148,6 @@ function App() {
 
       // Update status - server is now extracting text
       setProcessingStatus('extracting')
-
-      // Small delay to show extracting status (server does this fast)
       await new Promise((resolve) => setTimeout(resolve, 500))
 
       // Update status - server is now analyzing with AI
@@ -119,40 +163,13 @@ function App() {
         await new Promise((resolve) => setTimeout(resolve, 800))
         setInsights(analysis)
       } else {
-        // No analysis available (non-PDF or extraction failed)
         throw new Error('Could not analyze this document. Please ensure it is a valid PDF with readable text.')
       }
 
-      const category = categorizeInsights(analysis)
-      const newEntry = {
-        id: Date.now(),
-        name: file.name,
-        uploadedAt: new Date().toISOString(),
-        category,
-        riskLevel: analysis?.risk_level,
-        fileUrl: uploadData.file?.url,
-        fileId: uploadData.file?.fileId,
-      }
-
-      setUploads((prev) => [newEntry, ...prev].slice(0, 20))
-
-      // Notify backend that a document has been analyzed and update total count
-      try {
-        const res = await fetch('http://localhost:4000/api/documents/analyzed', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        if (res.ok) {
-          const data = await res.json()
-          if (typeof data.count === 'number') {
-            setTotalAnalyzed(data.count)
-          }
-        }
-      } catch (err) {
-        console.error('Failed to update analyzed documents count:', err)
-      }
+      // Refresh dashboard and quota after successful analysis
+      await fetchDashboard()
+      // Refresh quota after successful analysis
+      await fetchQuota()
     } catch (err) {
       setError(err.message || 'Failed to analyze document. Please try again.')
       console.error('Analysis error:', err)
@@ -165,7 +182,7 @@ function App() {
   const handleRetry = () => {
     if (currentFile) {
       setError(null)
-      handleFileUpload(currentFile)
+      handleAnalyze(currentFile)
     }
   }
 
@@ -177,9 +194,9 @@ function App() {
     setCurrentFile(null)
   }
 
-  const informationalCount = uploads.filter((u) => u.category === 'Informational').length
-  const actionRequiredCount = uploads.filter((u) => u.category === 'Action required').length
-  const urgentCount = uploads.filter((u) => u.category === 'Urgent / penalty risk').length
+  const informationalCount = summary.informational
+  const actionRequiredCount = summary.actionRequired
+  const urgentCount = summary.urgent
 
   return (
     <div className="min-h-screen bg-slate-950 pt-16 pb-10 px-4">
@@ -258,12 +275,34 @@ function App() {
                 <p className="text-sm text-slate-400 mb-4">
                   Drag and drop or browse a file to see a plain-language breakdown of what it means.
                 </p>
-                <DocumentUpload onFileUpload={handleFileUpload} disabled={!authReady} />
-                {!authReady && (
-                  <div className="mt-4 flex items-center space-x-2 text-sm text-slate-400">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-400" />
-                    <span>Initializing...</span>
+                {quota && quota.remaining <= 0 ? (
+                  <div className="rounded-2xl p-8 text-center border border-red-500/30 bg-red-500/5">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/30">
+                      <svg className="w-8 h-8 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <p className="text-sm font-medium text-red-300">
+                      You&apos;ve reached the limit of {quota.limit} free {quota.limit === 1 ? 'analysis' : 'analyses'}.
+                    </p>
+                    <p className="text-xs text-slate-400 mt-2">
+                      Upgrade your plan to continue analyzing documents.
+                    </p>
                   </div>
+                ) : (
+                  <>
+                    <DocumentUpload
+                      onAnalyze={handleAnalyze}
+                      disabled={!authReady}
+                      quota={quota}
+                    />
+                    {!authReady && (
+                      <div className="mt-4 flex items-center space-x-2 text-sm text-slate-400">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-400" />
+                        <span>Initializing...</span>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 

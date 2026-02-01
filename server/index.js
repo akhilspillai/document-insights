@@ -1,12 +1,13 @@
-import 'dotenv/config';
+import { onRequest } from 'firebase-functions/v2/https';
 import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import { DocumentsController } from './controllers/documentsController.js';
 import { UploadController } from './controllers/uploadController.js';
+import { QuotaController } from './controllers/quotaController.js';
+import { authMiddleware } from './middleware/authMiddleware.js';
 
 const app = express();
-const port = process.env.PORT || 4000;
 
 // Configure multer for memory storage (files stored in buffer)
 const upload = multer({
@@ -34,12 +35,14 @@ const upload = multer({
 app.use(cors());
 app.use(express.json());
 
-// Document insight routes
-app.get('/api/documents/count', DocumentsController.getAnalyzedCount);
-app.post('/api/documents/analyzed', DocumentsController.markAnalyzed);
+// Document dashboard route (requires auth)
+app.get('/api/documents', authMiddleware, DocumentsController.getDashboard);
 
-// File upload route
-app.post('/api/upload', upload.single('file'), UploadController.uploadDocument);
+// File upload route (requires auth)
+app.post('/api/upload', authMiddleware, upload.single('file'), UploadController.uploadDocument);
+
+// Quota route (requires auth)
+app.get('/api/quota', authMiddleware, QuotaController.getQuota);
 
 // Error handling for multer
 app.use((err, req, res, next) => {
@@ -55,7 +58,4 @@ app.use((err, req, res, next) => {
   next();
 });
 
-app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Document Insights API listening on http://localhost:${port}`);
-});
+export const api = onRequest(app);

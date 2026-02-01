@@ -1,18 +1,52 @@
 // controllers/documentsController.js
-// Simple controller abstraction for document-related API handlers.
+// Authenticated controller for dashboard data backed by Firestore.
 
-let analyzedDocumentsCount = 0;
+import { getUserDocuments } from '../services/firestoreService.js';
+
+function categorizeInsights(analysis) {
+  if (!analysis) return 'informational';
+
+  if (analysis.risk_level === 'high') return 'urgent';
+  if (analysis.risk_level === 'medium' || analysis.required_actions?.length > 0)
+    return 'actionRequired';
+
+  return 'informational';
+}
 
 class DocumentsController {
-  // GET /api/documents/count
-  static getAnalyzedCount(req, res) {
-    res.json({ count: analyzedDocumentsCount });
-  }
+  // GET /api/documents
+  static async getDashboard(req, res) {
+    try {
+      const docs = await getUserDocuments(req.userId);
 
-  // POST /api/documents/analyzed
-  static markAnalyzed(req, res) {
-    analyzedDocumentsCount += 1;
-    res.status(201).json({ count: analyzedDocumentsCount });
+      const summary = { informational: 0, actionRequired: 0, urgent: 0 };
+      const documents = docs.map((doc) => {
+        const cat = categorizeInsights(doc.analysis);
+        summary[cat] += 1;
+
+        return {
+          id: doc.id,
+          name: doc.originalFilename,
+          uploadedAt: doc.createdAt?.toDate?.() ?? doc.createdAt,
+          category:
+            cat === 'urgent'
+              ? 'Urgent / penalty risk'
+              : cat === 'actionRequired'
+              ? 'Action required'
+              : 'Informational',
+          riskLevel: doc.analysis?.risk_level ?? null,
+        };
+      });
+
+      res.json({
+        totalAnalyzed: documents.length,
+        documents,
+        summary,
+      });
+    } catch (err) {
+      console.error('Failed to fetch dashboard data:', err);
+      res.status(500).json({ error: 'Failed to fetch dashboard data' });
+    }
   }
 }
 

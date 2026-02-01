@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { auth, googleProvider } from '../lib/firebase';
-import { onAuthStateChanged, signInWithPopup, linkWithPopup, signOut, signInAnonymously } from 'firebase/auth';
+import { onAuthStateChanged, signOut, signInAnonymously } from 'firebase/auth';
+import { ensureGoogleSignIn } from '../lib/authGate';
 
 const AuthMenu = () => {
   const [open, setOpen] = useState(false);
@@ -19,25 +20,10 @@ const AuthMenu = () => {
 
   const handleSignIn = async () => {
     try {
-      if (user && isAnonymous) {
-        // Link anonymous account to Google account
-        await linkWithPopup(user, googleProvider);
-      } else {
-        await signInWithPopup(auth, googleProvider);
-      }
+      await ensureGoogleSignIn(auth, googleProvider);
       setOpen(false);
     } catch (err) {
-      // If linking fails (e.g., Google account already exists), sign in directly
-      if (err.code === 'auth/credential-already-in-use') {
-        try {
-          await signInWithPopup(auth, googleProvider);
-          setOpen(false);
-        } catch (signInErr) {
-          console.error('Sign-in failed', signInErr);
-        }
-      } else {
-        console.error('Sign-in failed', err);
-      }
+      console.error('Sign-in failed', err);
     }
   };
 

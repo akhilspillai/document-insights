@@ -1,7 +1,9 @@
 import { uploadFile, getFileUrl } from '../services/backblazeService.js';
-import { saveDocumentMetadata, updateDocumentAnalysis } from '../services/firestoreService.js';
+import { saveDocumentMetadata, updateDocumentAnalysis, getUserAnalysisCount, incrementAnalysisCount } from '../services/firestoreService.js';
 import { extractTextFromPdf } from '../services/pdfService.js';
 import { analyzeDocument } from '../services/grokService.js';
+
+const ANALYSIS_LIMIT = 2;
 
 export const UploadController = {
   async uploadDocument(req, res) {
@@ -11,7 +13,18 @@ export const UploadController = {
       }
 
       const { buffer, originalname, mimetype } = req.file;
-      const userId = req.body.userId || null;
+      const userId = req.userId;
+
+      // Check quota before processing
+      const currentCount = await getUserAnalysisCount(userId);
+      if (currentCount >= ANALYSIS_LIMIT) {
+        return res.status(403).json({
+          error: 'Analysis quota exceeded',
+          message: `You have reached the limit of ${ANALYSIS_LIMIT} document analyses.`,
+          used: currentCount,
+          limit: ANALYSIS_LIMIT,
+        });
+      }
 
       // Upload to Backblaze B2
       const result = await uploadFile(buffer, originalname, mimetype);
@@ -40,6 +53,9 @@ export const UploadController = {
 
             // Update Firestore with analysis
             await updateDocumentAnalysis(result.fileId, analysis);
+
+            // Increment user's analysis count
+            await incrementAnalysisCount(userId);
           }
         } catch (analysisError) {
           console.error('PDF analysis error:', analysisError);
