@@ -1,6 +1,6 @@
 import { getUserAnalysisCount } from '../services/firestoreService.js';
 
-const ANALYSIS_LIMIT = 1;
+const ANALYSIS_LIMIT = 5;
 
 export const QuotaController = {
   async getQuota(req, res) {
