@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { auth, googleProvider } from '../lib/firebase';
 import { onAuthStateChanged, signOut, signInAnonymously } from 'firebase/auth';
 import { ensureGoogleSignIn } from '../lib/authGate';
@@ -7,6 +7,7 @@ const AuthMenu = () => {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (firebaseUser) => {
@@ -15,6 +16,17 @@ const AuthMenu = () => {
     });
     return () => unsub();
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [open]);
 
   const isAnonymous = user?.isAnonymous ?? false;
 
@@ -31,9 +43,7 @@ const AuthMenu = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      // Sign in anonymously again after sign out
-      await signInAnonymously(auth);
-      setOpen(false);
+      window.location.reload();
     } catch (err) {
       console.error('Sign-out failed', err);
     }
@@ -42,7 +52,7 @@ const AuthMenu = () => {
   const displayInitial = user?.displayName?.[0]?.toUpperCase() ?? null;
 
   return (
-    <div className="relative">
+    <div className="relative" ref={menuRef}>
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
