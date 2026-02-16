@@ -1,3 +1,4 @@
+import { logger } from 'firebase-functions';
 import admin from 'firebase-admin';
 import { ensureAdminInitialized } from '../services/firestoreService.js';
 
@@ -14,7 +15,7 @@ export async function authMiddleware(req, res, next) {
     req.userId = decoded.uid;
     next();
   } catch (err) {
-    console.error('Token verification failed:', err.message);
+    logger.warn('Token verification failed', { error: err.message });
     return res.status(401).json({ error: 'Invalid or expired token' });
   }
 }

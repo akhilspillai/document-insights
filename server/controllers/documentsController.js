@@ -1,6 +1,7 @@
 // controllers/documentsController.js
 // Authenticated controller for dashboard data backed by Firestore.
 
+import { logger } from 'firebase-functions';
 import { getUserDocuments } from '../services/firestoreService.js';
 
 function categorizeInsights(analysis) {
@@ -44,7 +45,7 @@ class DocumentsController {
         summary,
       });
     } catch (err) {
-      console.error('Failed to fetch dashboard data:', err);
+      logger.error('Failed to fetch dashboard data', { error: err.message, userId: req.userId });
       res.status(500).json({ error: 'Failed to fetch dashboard data' });
     }
   }

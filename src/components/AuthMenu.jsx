@@ -20,7 +20,8 @@ const AuthMenu = () => {
 
   const handleSignIn = async () => {
     try {
-      await ensureGoogleSignIn(auth, googleProvider);
+      // Use delay to avoid popup blocking issues with file chooser
+      await ensureGoogleSignIn(auth, googleProvider, true);
       setOpen(false);
     } catch (err) {
       console.error('Sign-in failed', err);

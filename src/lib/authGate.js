@@ -5,13 +5,22 @@ import { linkWithPopup, signInWithPopup, signInWithCredential, GoogleAuthProvide
  * If the user is anonymous, attempts to link the anonymous account to Google.
  * Falls back to credential-based sign-in if linking fails (e.g., credential already in use).
  * Returns the signed-in user.
+ *
+ * @param {Object} auth - Firebase auth instance
+ * @param {Object} googleProvider - Google auth provider
+ * @param {boolean} delayPopup - If true, adds a small delay before opening popup to avoid file chooser conflicts
  */
-export async function ensureGoogleSignIn(auth, googleProvider) {
+export async function ensureGoogleSignIn(auth, googleProvider, delayPopup = false) {
   const currentUser = auth.currentUser;
 
   // Already signed in with Google (not anonymous)
   if (currentUser && !currentUser.isAnonymous) {
     return currentUser;
+  }
+
+  // Add delay if requested (to avoid popup blocking due to active file chooser)
+  if (delayPopup) {
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
 
   // Anonymous user — try to link with Google

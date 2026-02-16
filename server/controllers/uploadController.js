@@ -1,3 +1,4 @@
+import { logger } from 'firebase-functions';
 import { uploadFile, getFileUrl } from '../services/backblazeService.js';
 import { saveDocumentMetadata, updateDocumentAnalysis, getUserAnalysisCount, incrementAnalysisCount } from '../services/firestoreService.js';
 import { extractTextFromPdf } from '../services/pdfService.js';
@@ -58,7 +59,7 @@ export const UploadController = {
             await incrementAnalysisCount(userId);
           }
         } catch (analysisError) {
-          console.error('PDF analysis error:', analysisError);
+          logger.error('PDF analysis failed', { error: analysisError.message, file: originalname });
           // Don't fail the upload if analysis fails
         }
       }
@@ -73,7 +74,7 @@ export const UploadController = {
         analysis,
       });
     } catch (error) {
-      console.error('Upload error:', error);
+      logger.error('Upload failed', { error: error.message, stack: error.stack });
       res.status(500).json({
         error: 'Failed to upload file',
         message: error.message,

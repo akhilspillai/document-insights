@@ -1,3 +1,4 @@
+import { logger } from 'firebase-functions';
 import pdfParse from 'pdf-parse';
 
 export async function extractTextFromPdf(buffer) {
@@ -9,7 +10,7 @@ export async function extractTextFromPdf(buffer) {
       info: data.info,
     };
   } catch (error) {
-    console.error('PDF extraction error:', error);
+    logger.error('PDF extraction failed', { error: error.message });
     throw new Error(`Failed to extract text from PDF: ${error.message}`);
   }
 }

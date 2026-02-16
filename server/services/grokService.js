@@ -1,3 +1,4 @@
+import { logger } from 'firebase-functions';
 import OpenAI from 'openai';
 import fs from 'fs';
 import path from 'path';
@@ -67,7 +68,7 @@ export async function analyzeDocument(extractedText) {
     const analysis = JSON.parse(jsonString);
     return analysis;
   } catch (error) {
-    console.error('Grok API error:', error);
+    logger.error('Grok API error', { error: error.message });
     throw new Error(`Failed to analyze document with Grok: ${error.message}`);
   }
 }

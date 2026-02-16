@@ -7,7 +7,7 @@ import DocumentInsights from './components/DocumentInsights'
 import ProcessingStatus from './components/ProcessingStatus'
 import AuthMenu from './components/AuthMenu'
 
-const API_BASE = ''
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 function App() {
   const [insights, setInsights] = useState(null)
@@ -98,7 +98,32 @@ function App() {
     }
   }, [isGoogleUser, fetchDashboard])
 
+  // New handler to prompt Google sign-in before analysis
+  const handleSignInAndAnalyze = async (file) => {
+    // If user is already signed in with Google, proceed to analyze
+    if (isGoogleUser) {
+      return handleAnalyze(file)
+    }
+
+    // Otherwise, sign in first (with delay to avoid popup blocking)
+    try {
+      const signedInUser = await ensureGoogleSignIn(auth, googleProvider, true)
+      setUser(signedInUser)
+      // After successful sign-in, proceed to analyze
+      handleAnalyze(file)
+    } catch (err) {
+      setError('Google sign-in is required to analyze documents.')
+      console.error('Sign-in error:', err)
+    }
+  }
+
   const handleAnalyze = async (file) => {
+    // This function now assumes user is already signed in with Google
+    if (!isGoogleUser) {
+      setError('Please sign in with Google first.')
+      return
+    }
+
     setLoading(true)
     setError(null)
     setInsights(null)
@@ -107,20 +132,11 @@ function App() {
     setProcessingStatus('uploading')
 
     try {
-      // Step 1: Ensure user is signed in with Google
-      let signedInUser = user
-      if (!user || user.isAnonymous) {
-        try {
-          signedInUser = await ensureGoogleSignIn(auth, googleProvider)
-          setUser(signedInUser)
-        } catch (err) {
-          throw new Error('Google sign-in is required to analyze documents.')
-        }
+      // Step 1: Get auth headers
+      const authHeaders = await getAuthHeaders()
+      if (!authHeaders.Authorization) {
+        throw new Error('Not authenticated')
       }
-
-      // Step 2: Fetch fresh quota after sign-in
-      const token = await signedInUser.getIdToken()
-      const authHeaders = { Authorization: `Bearer ${token}` }
 
       const quotaRes = await fetch(`${API_BASE}/api/quota`, { headers: authHeaders })
       if (quotaRes.ok) {
@@ -292,9 +308,10 @@ function App() {
                 ) : (
                   <>
                     <DocumentUpload
-                      onAnalyze={handleAnalyze}
+                      onAnalyze={handleSignInAndAnalyze}
                       disabled={!authReady}
                       quota={quota}
+                      requiresSignIn={!isGoogleUser}
                     />
                     {!authReady && (
                       <div className="mt-4 flex items-center space-x-2 text-sm text-slate-400">
