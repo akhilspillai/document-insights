@@ -6,10 +6,31 @@ import DocumentUpload from './components/DocumentUpload'
 import DocumentInsights from './components/DocumentInsights'
 import ProcessingStatus from './components/ProcessingStatus'
 import AuthMenu from './components/AuthMenu'
+import { useTranslation } from './i18n/LanguageContext.jsx'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
+function LanguageToggle() {
+  const { language, setLanguage, languages } = useTranslation()
+  const langKeys = Object.keys(languages)
+
+  return (
+    <select
+      value={language}
+      onChange={(e) => setLanguage(e.target.value)}
+      className="text-xs font-medium rounded-full bg-white/10 text-blue-50 px-2.5 py-1 border border-white/20 cursor-pointer hover:bg-white/20 transition-colors appearance-none text-center"
+    >
+      {langKeys.map((key) => (
+        <option key={key} value={key} className="bg-slate-900 text-slate-50">
+          {languages[key].nativeLabel}
+        </option>
+      ))}
+    </select>
+  )
+}
+
 function App() {
+  const { t, language } = useTranslation()
   const [insights, setInsights] = useState(null)
   const [loading, setLoading] = useState(false)
   const [processingStatus, setProcessingStatus] = useState(null)
@@ -112,7 +133,7 @@ function App() {
       // After successful sign-in, proceed to analyze
       handleAnalyze(file)
     } catch (err) {
-      setError('Google sign-in is required to analyze documents.')
+      setError(t('error.signInRequired'))
       console.error('Sign-in error:', err)
     }
   }
@@ -120,7 +141,7 @@ function App() {
   const handleAnalyze = async (file) => {
     // This function now assumes user is already signed in with Google
     if (!isGoogleUser) {
-      setError('Please sign in with Google first.')
+      setError(t('error.signInFirst'))
       return
     }
 
@@ -135,7 +156,7 @@ function App() {
       // Step 1: Get auth headers
       const authHeaders = await getAuthHeaders()
       if (!authHeaders.Authorization) {
-        throw new Error('Not authenticated')
+        throw new Error(t('error.notAuthenticated'))
       }
 
       const quotaRes = await fetch(`${API_BASE}/api/quota`, { headers: authHeaders })
@@ -143,13 +164,14 @@ function App() {
         const quotaData = await quotaRes.json()
         setQuota(quotaData)
         if (quotaData.remaining <= 0) {
-          throw new Error(`You have reached the limit of ${quotaData.limit} free document analyses.`)
+          throw new Error(t('error.quotaExceeded', { limit: quotaData.limit }))
         }
       }
 
       // Step 3: Upload and analyze
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('language', language)
 
       const uploadRes = await fetch(`${API_BASE}/api/upload`, {
         method: 'POST',
@@ -179,7 +201,7 @@ function App() {
         await new Promise((resolve) => setTimeout(resolve, 800))
         setInsights(analysis)
       } else {
-        throw new Error('Could not analyze this document. Please ensure it is a valid PDF with readable text.')
+        throw new Error(t('error.cannotAnalyze'))
       }
 
       // Refresh dashboard and quota after successful analysis
@@ -187,7 +209,7 @@ function App() {
       // Refresh quota after successful analysis
       await fetchQuota()
     } catch (err) {
-      setError(err.message || 'Failed to analyze document. Please try again.')
+      setError(err.message || t('error.analysisFailed'))
       console.error('Analysis error:', err)
     } finally {
       setLoading(false)
@@ -214,17 +236,24 @@ function App() {
   const actionRequiredCount = summary.actionRequired
   const urgentCount = summary.urgent
 
+  const categoryLabel = (category) => {
+    if (category === 'Urgent / penalty risk') return t('documents.category.urgent')
+    if (category === 'Action required') return t('documents.category.actionRequired')
+    return t('documents.category.informational')
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 pt-16 pb-10 px-4">
       {/* App header bar */}
       <header className="fixed top-0 inset-x-0 z-20 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 shadow-md/80 border-b border-white/10">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3 gap-4">
           <span className="text-white font-semibold tracking-tight">
-            Document Insights
+            {t('header.title')}
           </span>
           <div className="flex items-center gap-3">
+            <LanguageToggle />
             <span className="hidden sm:inline-flex text-[10px] font-medium uppercase tracking-wide rounded-full bg-white/10 text-blue-50 px-2.5 py-1 border border-white/20">
-              Beta
+              {t('header.beta')}
             </span>
             <AuthMenu />
           </div>
@@ -237,16 +266,15 @@ function App() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
-                Document Insights Hub
+                {t('welcome.heading')}
               </h1>
               <p className="text-sm md:text-base text-blue-100 max-w-2xl">
-                Upload confusing documents and instantly see what they are, why you received them,
-                what you must do, and the risks of ignoring them.
+                {t('welcome.description')}
               </p>
             </div>
             <div className="flex items-center gap-4">
               <div className="bg-white/10 rounded-xl px-4 py-3 text-sm">
-                <div className="text-blue-100">Total documents analyzed</div>
+                <div className="text-blue-100">{t('welcome.totalAnalyzed')}</div>
                 <div className="text-2xl font-semibold">{totalAnalyzed}</div>
               </div>
             </div>
@@ -277,7 +305,7 @@ function App() {
                 }}
                 className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Analyze Another Document
+                {t('upload.analyzeAnother')}
               </button>
             </div>
           </div>
@@ -287,9 +315,9 @@ function App() {
             {/* Left column: upload + history */}
             <div className="space-y-6">
               <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg p-6">
-                <h2 className="text-lg font-semibold text-slate-50 mb-2">Upload a document</h2>
+                <h2 className="text-lg font-semibold text-slate-50 mb-2">{t('upload.heading')}</h2>
                 <p className="text-sm text-slate-400 mb-4">
-                  Drag and drop or browse a file to see a plain-language breakdown of what it means.
+                  {t('upload.description')}
                 </p>
                 {quota && quota.remaining <= 0 ? (
                   <div className="rounded-2xl p-8 text-center border border-red-500/30 bg-red-500/5">
@@ -299,10 +327,10 @@ function App() {
                       </svg>
                     </div>
                     <p className="text-sm font-medium text-red-300">
-                      You&apos;ve reached the limit of {quota.limit} free {quota.limit === 1 ? 'analysis' : 'analyses'}.
+                      {t('upload.quotaReached', { limit: quota.limit, analysisWord: quota.limit === 1 ? t('analysis.one') : t('analysis.other') })}
                     </p>
                     <p className="text-xs text-slate-400 mt-2">
-                      Upgrade your plan to continue analyzing documents.
+                      {t('upload.upgradeCta')}
                     </p>
                   </div>
                 ) : (
@@ -316,7 +344,7 @@ function App() {
                     {!authReady && (
                       <div className="mt-4 flex items-center space-x-2 text-sm text-slate-400">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-400" />
-                        <span>Initializing...</span>
+                        <span>{t('upload.initializing')}</span>
                       </div>
                     )}
                   </>
@@ -325,12 +353,12 @@ function App() {
 
               <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-slate-50">Recent documents</h2>
-                  <span className="text-xs text-slate-400">Last {uploads.length || 0} uploads</span>
+                  <h2 className="text-lg font-semibold text-slate-50">{t('documents.heading')}</h2>
+                  <span className="text-xs text-slate-400">{t('documents.count', { count: uploads.length || 0 })}</span>
                 </div>
                 {uploads.length === 0 ? (
                   <p className="text-sm text-slate-400">
-                    You haven&apos;t analyzed any documents yet. Upload your first file to see it here.
+                    {t('documents.empty')}
                   </p>
                 ) : (
                   <ul className="divide-y divide-slate-800">
@@ -354,7 +382,7 @@ function App() {
                               : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30')
                           }
                         >
-                          {upload.category}
+                          {categoryLabel(upload.category)}
                         </span>
                       </li>
                     ))}
@@ -366,33 +394,32 @@ function App() {
             {/* Right column: stats */}
             <aside className="space-y-6">
               <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg p-6">
-                <h2 className="text-lg font-semibold text-slate-50 mb-4">Insights summary</h2>
+                <h2 className="text-lg font-semibold text-slate-50 mb-4">{t('summary.heading')}</h2>
                 <div className="grid grid-cols-1 gap-3 text-sm">
                   <div className="flex items-center justify-between rounded-xl bg-slate-800/70 px-4 py-3">
                     <div>
-                      <p className="text-slate-300">Informational</p>
-                      <p className="text-xs text-slate-500">FYI-only, low risk</p>
+                      <p className="text-slate-300">{t('summary.informational')}</p>
+                      <p className="text-xs text-slate-500">{t('summary.informationalSub')}</p>
                     </div>
                     <span className="text-lg font-semibold text-emerald-300">{informationalCount}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-xl bg-slate-800/70 px-4 py-3">
                     <div>
-                      <p className="text-slate-300">Action required</p>
-                      <p className="text-xs text-slate-500">Needs follow-up steps</p>
+                      <p className="text-slate-300">{t('summary.actionRequired')}</p>
+                      <p className="text-xs text-slate-500">{t('summary.actionRequiredSub')}</p>
                     </div>
                     <span className="text-lg font-semibold text-amber-300">{actionRequiredCount}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-xl bg-slate-800/70 px-4 py-3">
                     <div>
-                      <p className="text-slate-300">Urgent / penalty risk</p>
-                      <p className="text-xs text-slate-500">Time-sensitive or high stakes</p>
+                      <p className="text-slate-300">{t('summary.urgent')}</p>
+                      <p className="text-xs text-slate-500">{t('summary.urgentSub')}</p>
                     </div>
                     <span className="text-lg font-semibold text-red-300">{urgentCount}</span>
                   </div>
                 </div>
                 <div className="mt-4 border-t border-slate-800 pt-3 text-xs text-slate-500">
-                  Categorization is an automated estimate. For serious legal or tax issues, consult a
-                  professional.
+                  {t('summary.disclaimer')}
                 </div>
               </div>
             </aside>

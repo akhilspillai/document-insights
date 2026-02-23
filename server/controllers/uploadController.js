@@ -14,6 +14,7 @@ export const UploadController = {
 
       const { buffer, originalname, mimetype } = req.file;
       const userId = req.userId;
+      const language = req.body?.language || config.defaultLanguage;
 
       // Check quota before processing
       const currentCount = await getUserAnalysisCount(userId);
@@ -49,7 +50,7 @@ export const UploadController = {
 
           if (pdfData.text && pdfData.text.trim().length > 0) {
             // Analyze with Grok
-            analysis = await analyzeDocument(pdfData.text);
+            analysis = await analyzeDocument(pdfData.text, language);
 
             // Update Firestore with analysis
             await updateDocumentAnalysis(result.fileId, analysis);

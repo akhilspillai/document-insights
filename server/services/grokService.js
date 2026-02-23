@@ -7,15 +7,20 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Load system message and user prompt templates
-const systemMessage = fs.readFileSync(
-  path.join(__dirname, '..', 'system_message.txt'),
-  'utf-8'
-);
-const userPromptTemplate = fs.readFileSync(
-  path.join(__dirname, '..', 'user_prompt.txt'),
-  'utf-8'
-);
+// Load prompt templates for each supported language
+const prompts = {};
+for (const lang of config.supportedLanguages) {
+  prompts[lang] = {
+    systemMessage: fs.readFileSync(
+      path.join(__dirname, '..', 'prompts', `system_message_${lang}.txt`),
+      'utf-8'
+    ),
+    userPromptTemplate: fs.readFileSync(
+      path.join(__dirname, '..', 'prompts', `user_prompt_${lang}.txt`),
+      'utf-8'
+    ),
+  };
+}
 
 // Lazily initialize Grok client (xAI uses OpenAI-compatible API)
 let grok;
@@ -32,7 +37,9 @@ function getGrokClient() {
   return grok;
 }
 
-export async function analyzeDocument(extractedText) {
+export async function analyzeDocument(extractedText, language = config.defaultLanguage) {
+  const lang = config.supportedLanguages.includes(language) ? language : config.defaultLanguage;
+  const { systemMessage, userPromptTemplate } = prompts[lang];
 
   // Replace placeholder with extracted text
   const userPrompt = userPromptTemplate.replace('{{EXTRACTED_TEXT}}', extractedText);

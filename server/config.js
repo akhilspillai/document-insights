@@ -20,4 +20,8 @@ export const config = {
   grokModel: 'grok-3-latest',
   grokBaseUrl: 'https://api.x.ai/v1',
   grokTemperature: 0.3,
+
+  // Language
+  supportedLanguages: ['en', 'hi'],
+  defaultLanguage: 'en',
 };

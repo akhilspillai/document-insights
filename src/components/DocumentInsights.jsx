@@ -1,6 +1,9 @@
 import React from 'react';
+import { useTranslation } from '../i18n/LanguageContext.jsx';
 
 const DocumentInsights = ({ insights, loading }) => {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <div className="w-full max-w-4xl mx-auto">
@@ -59,8 +62,8 @@ const DocumentInsights = ({ insights, loading }) => {
       {/* Header */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-50 mb-1">Document Analysis</h2>
-          <p className="text-sm text-slate-400">Here's your plain-English summary and what to do next.</p>
+          <h2 className="text-2xl font-bold text-slate-50 mb-1">{t('insights.heading')}</h2>
+          <p className="text-sm text-slate-400">{t('insights.subtitle')}</p>
         </div>
         <div className="hidden sm:flex items-center gap-2 text-xs">
           <span className={`inline-flex items-center rounded-full px-3 py-1 border ${
@@ -70,17 +73,17 @@ const DocumentInsights = ({ insights, loading }) => {
               ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
               : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
           }`}>
-            {riskLevel === 'high' ? 'High Risk' : riskLevel === 'medium' ? 'Medium Risk' : 'Low Risk'}
+            {riskLevel === 'high' ? t('insights.riskHigh') : riskLevel === 'medium' ? t('insights.riskMedium') : t('insights.riskLow')}
           </span>
           <span className="inline-flex items-center rounded-full bg-sky-500/10 text-sky-300 px-3 py-1 border border-sky-500/40">
-            Not legal advice
+            {t('insights.notLegalAdvice')}
           </span>
         </div>
       </div>
 
       {/* Document Type & Issuer */}
       <InsightSection
-        title="What this document is"
+        title={t('insights.whatDocument')}
         accent="blue"
         icon={
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +94,7 @@ const DocumentInsights = ({ insights, loading }) => {
         <div className="space-y-2">
           <p className="font-medium text-slate-50">{insights.document_type}</p>
           {insights.issuer && (
-            <p className="text-slate-400">Issued by: <span className="text-slate-200">{insights.issuer}</span></p>
+            <p className="text-slate-400">{t('insights.issuedBy')} <span className="text-slate-200">{insights.issuer}</span></p>
           )}
           {insights.summary_simple && (
             <p className="mt-3 text-slate-300">{insights.summary_simple}</p>
@@ -101,7 +104,7 @@ const DocumentInsights = ({ insights, loading }) => {
 
       {/* Why Received */}
       <InsightSection
-        title="Why you received it"
+        title={t('insights.whyReceived')}
         accent="green"
         icon={
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,7 +121,7 @@ const DocumentInsights = ({ insights, loading }) => {
          insights.key_details.dates?.length > 0 ||
          insights.key_details.reference_numbers?.length > 0) && (
         <InsightSection
-          title="Key Details"
+          title={t('insights.keyDetails')}
           accent="cyan"
           icon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +132,7 @@ const DocumentInsights = ({ insights, loading }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {insights.key_details.amounts?.length > 0 && (
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">Amounts</p>
+                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">{t('insights.amounts')}</p>
                 <ul className="space-y-1">
                   {insights.key_details.amounts.map((amount, i) => (
                     <li key={i} className="text-cyan-300 font-medium">{amount}</li>
@@ -139,7 +142,7 @@ const DocumentInsights = ({ insights, loading }) => {
             )}
             {insights.key_details.dates?.length > 0 && (
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">Important Dates</p>
+                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">{t('insights.dates')}</p>
                 <ul className="space-y-1">
                   {insights.key_details.dates.map((date, i) => (
                     <li key={i} className="text-amber-300">{date}</li>
@@ -149,7 +152,7 @@ const DocumentInsights = ({ insights, loading }) => {
             )}
             {insights.key_details.reference_numbers?.length > 0 && (
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">Reference Numbers</p>
+                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">{t('insights.referenceNumbers')}</p>
                 <ul className="space-y-1">
                   {insights.key_details.reference_numbers.map((ref, i) => (
                     <li key={i} className="font-mono text-slate-300">{ref}</li>
@@ -164,7 +167,7 @@ const DocumentInsights = ({ insights, loading }) => {
       {/* Required Actions */}
       {insights.required_actions?.length > 0 && (
         <InsightSection
-          title="What you must do (step-by-step)"
+          title={t('insights.requiredActions')}
           accent="purple"
           icon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,7 +184,7 @@ const DocumentInsights = ({ insights, loading }) => {
                 <div className="flex-1 space-y-1">
                   <p className="font-medium text-slate-50">{item.action}</p>
                   {item.deadline && (
-                    <p className="text-xs text-amber-300">Deadline: {item.deadline}</p>
+                    <p className="text-xs text-amber-300">{t('insights.deadline', { deadline: item.deadline })}</p>
                   )}
                   {item.how_to_do_it && (
                     <p className="text-slate-400 text-xs">{item.how_to_do_it}</p>
@@ -196,7 +199,7 @@ const DocumentInsights = ({ insights, loading }) => {
       {/* Risk & Professional Help */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <InsightSection
-          title="Risk Level"
+          title={t('insights.riskLevel')}
           accent="red"
           icon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,13 +216,13 @@ const DocumentInsights = ({ insights, loading }) => {
                 ? 'bg-amber-500/15 text-amber-200 border border-amber-400/60'
                 : 'bg-emerald-500/15 text-emerald-200 border border-emerald-400/60'
             }`}>
-              {riskLevel === 'high' ? 'High Risk - Act Now' : riskLevel === 'medium' ? 'Medium Risk - Take Action Soon' : 'Low Risk - For Your Information'}
+              {riskLevel === 'high' ? t('insights.riskHighAct') : riskLevel === 'medium' ? t('insights.riskMediumAct') : t('insights.riskLowAct')}
             </span>
           </div>
         </InsightSection>
 
         <InsightSection
-          title="Professional Help Needed"
+          title={t('insights.professionalHelp')}
           accent="indigo"
           icon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,10 +239,10 @@ const DocumentInsights = ({ insights, loading }) => {
                 : 'bg-emerald-500/15 text-emerald-200 border border-emerald-400/60'
             }`}>
               {professionalHelp === 'yes'
-                ? 'Yes - Consult a CA/Lawyer'
+                ? t('insights.professionalYes')
                 : professionalHelp === 'maybe'
-                ? 'Maybe - Consider Professional Help'
-                : 'No - You Can Handle This'}
+                ? t('insights.professionalMaybe')
+                : t('insights.professionalNo')}
             </span>
           </div>
         </InsightSection>
@@ -248,7 +251,7 @@ const DocumentInsights = ({ insights, loading }) => {
       {/* What Happens if Ignored */}
       {insights.what_happens_if_ignored && (
         <InsightSection
-          title="What happens if you ignore it"
+          title={t('insights.whatIfIgnored')}
           accent="orange"
           icon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -264,7 +267,7 @@ const DocumentInsights = ({ insights, loading }) => {
       {/* Missing/Unclear Info */}
       {insights.missing_or_unclear_info?.length > 0 && (
         <InsightSection
-          title="Missing or Unclear Information"
+          title={t('insights.missingInfo')}
           accent="slate"
           icon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,7 +289,7 @@ const DocumentInsights = ({ insights, loading }) => {
       {/* Confidence Notes */}
       {insights.confidence_notes && (
         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 text-xs text-slate-500">
-          <span className="font-medium text-slate-400">AI Note:</span> {insights.confidence_notes}
+          <span className="font-medium text-slate-400">{t('insights.aiNote')}</span> {insights.confidence_notes}
         </div>
       )}
     </div>

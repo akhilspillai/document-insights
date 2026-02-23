@@ -1,11 +1,14 @@
 import React from 'react';
+import { useTranslation } from '../i18n/LanguageContext.jsx';
 
 const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
+  const { t } = useTranslation();
+
   const stages = [
-    { key: 'uploading', label: 'Uploading document', icon: 'upload' },
-    { key: 'extracting', label: 'Extracting text', icon: 'document' },
-    { key: 'analyzing', label: 'Analyzing with AI', icon: 'brain' },
-    { key: 'complete', label: 'Analysis complete', icon: 'check' },
+    { key: 'uploading', label: t('processing.uploading'), icon: 'upload' },
+    { key: 'extracting', label: t('processing.extracting'), icon: 'document' },
+    { key: 'analyzing', label: t('processing.analyzing'), icon: 'brain' },
+    { key: 'complete', label: t('processing.complete'), icon: 'check' },
   ];
 
   const currentStageIndex = stages.findIndex((s) => s.key === status);
@@ -53,12 +56,12 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
             </svg>
           </div>
 
-          <h3 className="text-xl font-semibold text-slate-50 mb-2">Something went wrong</h3>
+          <h3 className="text-xl font-semibold text-slate-50 mb-2">{t('processing.errorHeading')}</h3>
           <p className="text-slate-400 mb-6 max-w-md mx-auto">{error}</p>
 
           {fileName && (
             <p className="text-xs text-slate-500 mb-6">
-              File: <span className="text-slate-400">{fileName}</span>
+              {t('processing.errorFile')} <span className="text-slate-400">{fileName}</span>
             </p>
           )}
 
@@ -67,22 +70,22 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
               onClick={onCancel}
               className="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 transition-colors border border-slate-700"
             >
-              Go back
+              {t('processing.goBack')}
             </button>
             <button
               onClick={onRetry}
               className="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 transition-colors"
             >
-              Try again
+              {t('processing.tryAgain')}
             </button>
           </div>
 
           <div className="mt-8 pt-6 border-t border-slate-800">
-            <p className="text-xs text-slate-500">Common issues:</p>
+            <p className="text-xs text-slate-500">{t('processing.commonIssues')}</p>
             <ul className="mt-2 text-xs text-slate-400 space-y-1">
-              <li>PDF may be scanned (image-based) without text</li>
-              <li>File may be corrupted or password-protected</li>
-              <li>Document may be in an unsupported language</li>
+              <li>{t('processing.issue1')}</li>
+              <li>{t('processing.issue2')}</li>
+              <li>{t('processing.issue3')}</li>
             </ul>
           </div>
         </div>
@@ -102,7 +105,7 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
               </svg>
             </div>
           </div>
-          <h3 className="text-xl font-semibold text-slate-50 mb-2">Processing your document</h3>
+          <h3 className="text-xl font-semibold text-slate-50 mb-2">{t('processing.heading')}</h3>
           {fileName && (
             <p className="text-sm text-slate-400">{fileName}</p>
           )}
@@ -158,11 +161,11 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
                     {stage.label}
                   </p>
                   {isActive && (
-                    <p className="text-xs text-slate-400 mt-0.5">Please wait...</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{t('processing.pleaseWait')}</p>
                   )}
                 </div>
                 {isComplete && (
-                  <span className="text-xs text-emerald-400 font-medium">Done</span>
+                  <span className="text-xs text-emerald-400 font-medium">{t('processing.done')}</span>
                 )}
               </div>
             );
@@ -175,14 +178,14 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
             onClick={onCancel}
             className="text-sm text-slate-400 hover:text-slate-300 transition-colors"
           >
-            Cancel
+            {t('processing.cancel')}
           </button>
         </div>
 
         {/* Info */}
         <div className="mt-6 pt-6 border-t border-slate-800 text-center">
           <p className="text-xs text-slate-500">
-            This usually takes 10-30 seconds depending on document size
+            {t('processing.timeEstimate')}
           </p>
         </div>
       </div>

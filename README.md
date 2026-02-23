@@ -58,12 +58,18 @@ The AI returns a structured analysis including:
 │   │   ├── DocumentInsights.jsx   # Analysis results display
 │   │   ├── ProcessingStatus.jsx   # Upload progress indicator
 │   │   └── AuthMenu.jsx           # Sign-in/sign-out menu
+│   ├── i18n/
+│   │   ├── en.json                # English translations
+│   │   ├── hi.json                # Hindi translations
+│   │   ├── index.js               # Language registry
+│   │   └── LanguageContext.jsx    # React context + useTranslation hook
 │   └── lib/
 │       ├── firebase.js            # Firebase client setup
 │       └── authGate.js            # Google sign-in logic
 │
 ├── server/                        # Express backend (Cloud Function)
 │   ├── index.js                   # Routes and middleware
+│   ├── config.js                  # Centralized configuration
 │   ├── controllers/
 │   │   ├── uploadController.js    # Upload + analysis trigger
 │   │   ├── documentsController.js # Dashboard data
@@ -73,10 +79,13 @@ The AI returns a structured analysis including:
 │   │   ├── firestoreService.js    # Firestore operations
 │   │   ├── grokService.js         # Grok AI integration
 │   │   └── pdfService.js          # PDF text extraction
-│   ├── middleware/
-│   │   └── authMiddleware.js      # Token verification
-│   ├── system_message.txt         # AI system prompt
-│   └── user_prompt.txt            # AI analysis template
+│   ├── prompts/                   # Language-specific AI prompts
+│   │   ├── system_message_en.txt  # English system prompt
+│   │   ├── system_message_hi.txt  # Hindi system prompt
+│   │   ├── user_prompt_en.txt     # English analysis template
+│   │   └── user_prompt_hi.txt     # Hindi analysis template
+│   └── middleware/
+│       └── authMiddleware.js      # Token verification
 │
 ├── firebase.json                  # Hosting + Functions config
 └── vite.config.js                 # Dev server with API proxy
@@ -158,6 +167,32 @@ firebase deploy
 ```
 
 See [PRODUCTION_DEPLOYMENT.md](PRODUCTION_DEPLOYMENT.md) for detailed deployment instructions, secrets management, architecture overview, and troubleshooting.
+
+## Adding a New Language
+
+The app supports multiple languages via static translation files. To add a new language (e.g., Tamil `ta`):
+
+1. **Frontend translations** — Copy `src/i18n/en.json` to `src/i18n/ta.json` and translate all values.
+
+2. **Register the language** — In `src/i18n/index.js`, import the new file and add an entry to the `languages` object:
+   ```js
+   import ta from './ta.json';
+
+   export const languages = {
+     en: { label: 'English', nativeLabel: 'English', translations: en },
+     hi: { label: 'Hindi', nativeLabel: 'हिन्दी', translations: hi },
+     ta: { label: 'Tamil', nativeLabel: 'தமிழ்', translations: ta },
+   };
+   ```
+
+3. **AI prompt files** — Create `server/prompts/system_message_ta.txt` and `server/prompts/user_prompt_ta.txt` (use the Hindi versions as a reference for the language-specific instructions).
+
+4. **Backend config** — Add the language code to `supportedLanguages` in `server/config.js`:
+   ```js
+   supportedLanguages: ['en', 'hi', 'ta'],
+   ```
+
+The language toggle in the header will automatically pick up the new language.
 
 ## Quota
 

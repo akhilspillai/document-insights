@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { auth, googleProvider } from '../lib/firebase';
 import { onAuthStateChanged, signOut, signInAnonymously } from 'firebase/auth';
 import { ensureGoogleSignIn } from '../lib/authGate';
+import { useTranslation } from '../i18n/LanguageContext.jsx';
 
 const AuthMenu = () => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,7 +60,7 @@ const AuthMenu = () => {
         onClick={() => setOpen((prev) => !prev)}
         className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/40 bg-white/10 text-white shadow-sm hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:ring-white/60"
       >
-        <span className="sr-only">Open profile menu</span>
+        <span className="sr-only">{t('auth.openMenu')}</span>
         {user && displayInitial ? (
           <span className="text-xs font-semibold">
             {displayInitial}
@@ -83,7 +85,7 @@ const AuthMenu = () => {
       {open && (
         <div className="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-xl p-4 z-30">
           {loading ? (
-            <p className="text-xs text-slate-400">Checking your session…</p>
+            <p className="text-xs text-slate-400">{t('auth.checkingSession')}</p>
           ) : user && !isAnonymous ? (
             <>
               <div className="flex items-center gap-3 mb-3">
@@ -91,7 +93,7 @@ const AuthMenu = () => {
                   {displayInitial ?? '?'}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-50 truncate">{user.displayName ?? 'Signed in'}</p>
+                  <p className="text-sm font-semibold text-slate-50 truncate">{user.displayName ?? t('auth.signedIn')}</p>
                   {user.email && (
                     <p className="text-xs text-slate-400 truncate">{user.email}</p>
                   )}
@@ -102,14 +104,14 @@ const AuthMenu = () => {
                 onClick={handleSignOut}
                 className="w-full rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-50 text-xs font-medium py-2 mt-1"
               >
-                Sign out
+                {t('auth.signOut')}
               </button>
             </>
           ) : (
             <>
-              <p className="text-sm font-semibold text-slate-50 mb-2">Sign in</p>
+              <p className="text-sm font-semibold text-slate-50 mb-2">{t('auth.signIn')}</p>
               <p className="text-xs text-slate-400 mb-3">
-                Use your Google account to save documents and personalize your dashboard.
+                {t('auth.signInDescription')}
               </p>
               <button
                 type="button"
@@ -139,7 +141,7 @@ const AuthMenu = () => {
                   />
                   <path fill="none" d="M2 2h20v20H2z" />
                 </svg>
-                <span>Sign in with Google</span>
+                <span>{t('auth.signInGoogle')}</span>
               </button>
             </>
           )}
