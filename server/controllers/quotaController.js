@@ -1,7 +1,6 @@
 import { logger } from 'firebase-functions';
 import { getUserAnalysisCount } from '../services/firestoreService.js';
-
-const ANALYSIS_LIMIT = 5;
+import { config } from '../config.js';
 
 export const QuotaController = {
   async getQuota(req, res) {
@@ -9,8 +8,8 @@ export const QuotaController = {
       const used = await getUserAnalysisCount(req.userId);
       res.json({
         used,
-        limit: ANALYSIS_LIMIT,
-        remaining: Math.max(0, ANALYSIS_LIMIT - used),
+        limit: config.analysisLimit,
+        remaining: Math.max(0, config.analysisLimit - used),
       });
     } catch (error) {
       logger.error('Quota fetch failed', { error: error.message, userId: req.userId });

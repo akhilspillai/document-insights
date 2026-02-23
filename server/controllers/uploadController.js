@@ -3,8 +3,7 @@ import { uploadFile, getFileUrl } from '../services/backblazeService.js';
 import { saveDocumentMetadata, updateDocumentAnalysis, getUserAnalysisCount, incrementAnalysisCount } from '../services/firestoreService.js';
 import { extractTextFromPdf } from '../services/pdfService.js';
 import { analyzeDocument } from '../services/grokService.js';
-
-const ANALYSIS_LIMIT = 2;
+import { config } from '../config.js';
 
 export const UploadController = {
   async uploadDocument(req, res) {
@@ -18,12 +17,12 @@ export const UploadController = {
 
       // Check quota before processing
       const currentCount = await getUserAnalysisCount(userId);
-      if (currentCount >= ANALYSIS_LIMIT) {
+      if (currentCount >= config.analysisLimit) {
         return res.status(403).json({
           error: 'Analysis quota exceeded',
-          message: `You have reached the limit of ${ANALYSIS_LIMIT} document analyses.`,
+          message: `You have reached the limit of ${config.analysisLimit} document analyses.`,
           used: currentCount,
-          limit: ANALYSIS_LIMIT,
+          limit: config.analysisLimit,
         });
       }
 

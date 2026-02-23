@@ -1,4 +1,5 @@
 import admin from 'firebase-admin';
+import { config } from '../config.js';
 
 export function ensureAdminInitialized() {
   if (!admin.apps.length) {
@@ -57,7 +58,7 @@ export async function getUserDocuments(userId) {
     .where('userId', '==', userId)
     .where('analysis', '!=', null)
     .orderBy('createdAt', 'desc')
-    .limit(20)
+    .limit(config.documentsQueryLimit)
     .get();
 
   return snapshot.docs.map((doc) => ({

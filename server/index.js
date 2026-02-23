@@ -7,18 +7,9 @@ import { DocumentsController } from './controllers/documentsController.js';
 import { UploadController } from './controllers/uploadController.js';
 import { QuotaController } from './controllers/quotaController.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
+import { config } from './config.js';
 
 const app = express();
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_MIMES = [
-  'application/pdf',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'text/plain',
-  'image/png',
-  'image/jpeg',
-];
 
 // Middleware that parses multipart form data using busboy.
 // Uses req.rawBody (available in deployed Firebase Functions) or
@@ -26,7 +17,7 @@ const ALLOWED_MIMES = [
 function parseMultipart(req, res, next) {
   const busboy = Busboy({
     headers: req.headers,
-    limits: { fileSize: MAX_FILE_SIZE },
+    limits: { fileSize: config.maxFileSize },
   });
 
   const fields = {};
@@ -40,7 +31,7 @@ function parseMultipart(req, res, next) {
   busboy.on('file', (name, stream, info) => {
     const { filename, mimeType } = info;
 
-    if (!ALLOWED_MIMES.includes(mimeType)) {
+    if (!config.allowedMimeTypes.includes(mimeType)) {
       stream.resume(); // drain the stream
       if (!errorSent) {
         errorSent = true;
@@ -54,7 +45,7 @@ function parseMultipart(req, res, next) {
 
     stream.on('data', (chunk) => {
       size += chunk.length;
-      if (size <= MAX_FILE_SIZE) {
+      if (size <= config.maxFileSize) {
         chunks.push(chunk);
       }
     });
@@ -62,7 +53,7 @@ function parseMultipart(req, res, next) {
     stream.on('limit', () => {
       if (!errorSent) {
         errorSent = true;
-        res.status(400).json({ error: 'File too large. Maximum size is 10MB.' });
+        res.status(400).json({ error: `File too large. Maximum size is ${config.maxFileSize / (1024 * 1024)}MB.` });
       }
     });
 

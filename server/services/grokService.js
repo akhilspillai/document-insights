@@ -1,5 +1,6 @@
 import { logger } from 'firebase-functions';
 import OpenAI from 'openai';
+import { config } from '../config.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -25,7 +26,7 @@ function getGrokClient() {
     }
     grok = new OpenAI({
       apiKey: process.env.GROK_API_KEY,
-      baseURL: 'https://api.x.ai/v1',
+      baseURL: config.grokBaseUrl,
     });
   }
   return grok;
@@ -38,12 +39,12 @@ export async function analyzeDocument(extractedText) {
 
   try {
     const response = await getGrokClient().chat.completions.create({
-      model: 'grok-3-latest',
+      model: config.grokModel,
       messages: [
         { role: 'system', content: systemMessage },
         { role: 'user', content: userPrompt },
       ],
-      temperature: 0.3,
+      temperature: config.grokTemperature,
     });
 
     const content = response.choices[0]?.message?.content;
