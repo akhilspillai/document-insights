@@ -106,5 +106,10 @@
   "error.analysisFailed": "दस्तावेज़ का विश्लेषण विफल रहा। कृपया पुनः प्रयास करें।",
 
   "language.en": "English",
-  "language.hi": "हिन्दी"
+  "language.hi": "हिन्दी",
+  "language.ta": "தமிழ்",
+  "language.te": "తెలుగు",
+  "language.kn": "ಕನ್ನಡ",
+  "language.ml": "മലയാളം",
+  "language.mr": "मराठी"
 }

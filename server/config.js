@@ -22,6 +22,6 @@ export const config = {
   grokTemperature: 0.3,
 
   // Language
-  supportedLanguages: ['en', 'hi'],
+  supportedLanguages: ['en', 'hi', 'ta', 'te', 'kn', 'ml', 'mr'],
   defaultLanguage: 'en',
 };
