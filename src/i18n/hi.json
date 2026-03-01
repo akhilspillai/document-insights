@@ -14,9 +14,9 @@
   "upload.analyzeAnother": "एक और दस्तावेज़ का विश्लेषण करें",
 
   "upload.dropHeading": "अपना दस्तावेज़ यहाँ छोड़ें या ब्राउज़ करने के लिए क्लिक करें",
-  "upload.supportedFiles": "PDF, Word, और टेक्स्ट फ़ाइलें समर्थित हैं",
+  "upload.supportedFiles": "PDF, Word, टेक्स्ट, JPEG, और PNG फ़ाइलें समर्थित हैं",
   "upload.chooseFile": "फ़ाइल चुनें",
-  "upload.invalidFile": "कृपया एक मान्य दस्तावेज़ अपलोड करें (PDF, Word, या टेक्स्ट फ़ाइल)",
+  "upload.invalidFile": "कृपया एक मान्य दस्तावेज़ अपलोड करें (PDF, Word, टेक्स्ट, JPEG, या PNG फ़ाइल)",
   "upload.removeFile": "फ़ाइल हटाएँ",
   "upload.quotaExceeded": "आपने {{limit}} मुफ़्त विश्लेषणों की सीमा पूरी कर ली है।",
   "upload.signInPrompt": "दस्तावेज़ों का विश्लेषण करने और अपने अपलोड ट्रैक करने के लिए अपने Google खाते से साइन इन करें।",

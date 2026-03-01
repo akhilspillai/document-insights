@@ -116,4 +116,8 @@ app.use((err, req, res, next) => {
   next();
 });
 
-export const api = onRequest(app);
+// Increase memory and timeout to accommodate OCR workloads.
+// tesseract.js + sharp + a multi-page image rasterisation can push past the
+// default 256 MiB limit, and OCR on a dense multi-page document can exceed
+// the default 60 s timeout.
+export const api = onRequest({ memory: '512MiB', timeoutSeconds: 120 }, app);

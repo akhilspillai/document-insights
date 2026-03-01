@@ -30,7 +30,9 @@ const DocumentUpload = ({ onFileSelect, onAnalyze, disabled = false, quota, requ
     if (droppedFile && (droppedFile.type.startsWith('application/pdf') ||
         droppedFile.type.startsWith('application/msword') ||
         droppedFile.type.startsWith('application/vnd.openxmlformats-officedocument') ||
-        droppedFile.type.startsWith('text/'))) {
+        droppedFile.type.startsWith('text/') ||
+        droppedFile.type === 'image/jpeg' ||
+        droppedFile.type === 'image/png')) {
       selectFile(droppedFile);
     } else {
       alert(t('upload.invalidFile'));
@@ -88,7 +90,7 @@ const DocumentUpload = ({ onFileSelect, onAnalyze, disabled = false, quota, requ
             }}
             className="hidden"
             onChange={handleFileSelect}
-            accept=".pdf,.doc,.docx,.txt"
+            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
             disabled={disabled}
           />
 

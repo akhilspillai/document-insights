@@ -14,9 +14,9 @@
   "upload.analyzeAnother": "ಇನ್ನೊಂದು ದಾಖಲೆಯನ್ನು ವಿಶ್ಲೇಷಿಸಿ",
 
   "upload.dropHeading": "ನಿಮ್ಮ ದಾಖಲೆಯನ್ನು ಇಲ್ಲಿ ಬಿಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
-  "upload.supportedFiles": "PDF, Word ಮತ್ತು ಟೆಕ್ಸ್ಟ್ ಫೈಲ್‌ಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ",
+  "upload.supportedFiles": "PDF, Word, ಟೆಕ್ಸ್ಟ್, JPEG ಮತ್ತು PNG ಫೈಲ್‌ಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ",
   "upload.chooseFile": "ಫೈಲ್ ಆರಿಸಿ",
-  "upload.invalidFile": "ದಯವಿಟ್ಟು ಮಾನ್ಯ ದಾಖಲೆಯನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ (PDF, Word, ಅಥವಾ ಟೆಕ್ಸ್ಟ್ ಫೈಲ್)",
+  "upload.invalidFile": "ದಯವಿಟ್ಟು ಮಾನ್ಯ ದಾಖಲೆಯನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ (PDF, Word, ಟೆಕ್ಸ್ಟ್, JPEG, ಅಥವಾ PNG ಫೈಲ್)",
   "upload.removeFile": "ಫೈಲ್ ತೆಗೆದುಹಾಕಿ",
   "upload.quotaExceeded": "ನೀವು {{limit}} ಉಚಿತ ವಿಶ್ಲೇಷಣೆಗಳ ಮಿತಿಯನ್ನು ತಲುಪಿದ್ದೀರಿ.",
   "upload.signInPrompt": "ದಾಖಲೆಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಲು ಮತ್ತು ನಿಮ್ಮ ಅಪ್‌ಲೋಡ್‌ಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಲು ನಿಮ್ಮ Google ಖಾತೆಯಿಂದ ಸೈನ್ ಇನ್ ಮಾಡಿ.",

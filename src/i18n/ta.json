@@ -14,9 +14,9 @@
   "upload.analyzeAnother": "மற்றொரு ஆவணத்தை பகுப்பாய்வு செய்யுங்கள்",
 
   "upload.dropHeading": "உங்கள் ஆவணத்தை இங்கே விடுங்கள் அல்லது உலாவ கிளிக் செய்யுங்கள்",
-  "upload.supportedFiles": "PDF, Word மற்றும் உரை கோப்புகளை ஆதரிக்கிறது",
+  "upload.supportedFiles": "PDF, Word, உரை, JPEG மற்றும் PNG கோப்புகளை ஆதரிக்கிறது",
   "upload.chooseFile": "கோப்பை தேர்வு செய்யுங்கள்",
-  "upload.invalidFile": "சரியான ஆவணத்தை பதிவேற்றவும் (PDF, Word, அல்லது உரை கோப்பு)",
+  "upload.invalidFile": "சரியான ஆவணத்தை பதிவேற்றவும் (PDF, Word, உரை, JPEG, அல்லது PNG கோப்பு)",
   "upload.removeFile": "கோப்பை அகற்றுங்கள்",
   "upload.quotaExceeded": "நீங்கள் {{limit}} இலவச பகுப்பாய்வுகளின் வரம்பை அடைந்துவிட்டீர்கள்.",
   "upload.signInPrompt": "ஆவணங்களை பகுப்பாய்வு செய்து உங்கள் பதிவேற்றங்களை கண்காணிக்க உங்கள் Google கணக்கில் உள்நுழையுங்கள்.",

@@ -14,9 +14,9 @@
   "upload.analyzeAnother": "മറ്റൊരു രേഖ വിശകലനം ചെയ്യൂ",
 
   "upload.dropHeading": "നിങ്ങളുടെ രേഖ ഇവിടെ ഇടുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യാൻ ക്ലിക്ക് ചെയ്യൂ",
-  "upload.supportedFiles": "PDF, Word, ടെക്സ്റ്റ് ഫയലുകൾ പിന്തുണയ്ക്കുന്നു",
+  "upload.supportedFiles": "PDF, Word, ടെക്സ്റ്റ്, JPEG, PNG ഫയലുകൾ പിന്തുണയ്ക്കുന്നു",
   "upload.chooseFile": "ഫയൽ തിരഞ്ഞെടുക്കൂ",
-  "upload.invalidFile": "ദയവായി ഒരു സാധുവായ രേഖ അപ്‌ലോഡ് ചെയ്യൂ (PDF, Word, അല്ലെങ്കിൽ ടെക്സ്റ്റ് ഫയൽ)",
+  "upload.invalidFile": "ദയവായി ഒരു സാധുവായ രേഖ അപ്‌ലോഡ് ചെയ്യൂ (PDF, Word, ടെക്സ്റ്റ്, JPEG, അല്ലെങ്കിൽ PNG ഫയൽ)",
   "upload.removeFile": "ഫയൽ നീക്കം ചെയ്യൂ",
   "upload.quotaExceeded": "നിങ്ങൾ {{limit}} സൗജന്യ വിശകലനങ്ങളുടെ പരിധിയിൽ എത്തിയിരിക്കുന്നു.",
   "upload.signInPrompt": "രേഖകൾ വിശകലനം ചെയ്യാനും അപ്‌ലോഡുകൾ ട്രാക്ക് ചെയ്യാനും Google അക്കൗണ്ടിൽ സൈൻ ഇൻ ചെയ്യൂ.",

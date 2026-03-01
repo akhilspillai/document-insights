@@ -14,9 +14,9 @@
   "upload.analyzeAnother": "Analyze Another Document",
 
   "upload.dropHeading": "Drop your document here or click to browse",
-  "upload.supportedFiles": "Supports PDF, Word, and text files",
+  "upload.supportedFiles": "Supports PDF, Word, text, JPEG, and PNG files",
   "upload.chooseFile": "Choose a file",
-  "upload.invalidFile": "Please upload a valid document (PDF, Word, or text file)",
+  "upload.invalidFile": "Please upload a valid document (PDF, Word, text, JPEG, or PNG file)",
   "upload.removeFile": "Remove file",
   "upload.quotaExceeded": "You've reached the limit of {{limit}} free analyses.",
   "upload.signInPrompt": "Sign in with your Google account to analyze documents and track your uploads.",

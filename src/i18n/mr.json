@@ -14,9 +14,9 @@
   "upload.analyzeAnother": "आणखी एका कागदपत्राचे विश्लेषण करा",
 
   "upload.dropHeading": "तुमचे कागदपत्र येथे सोडा किंवा ब्राउझ करण्यासाठी क्लिक करा",
-  "upload.supportedFiles": "PDF, Word आणि मजकूर फाइल्स समर्थित आहेत",
+  "upload.supportedFiles": "PDF, Word, मजकूर, JPEG आणि PNG फाइल्स समर्थित आहेत",
   "upload.chooseFile": "फाइल निवडा",
-  "upload.invalidFile": "कृपया एक वैध कागदपत्र अपलोड करा (PDF, Word, किंवा मजकूर फाइल)",
+  "upload.invalidFile": "कृपया एक वैध कागदपत्र अपलोड करा (PDF, Word, मजकूर, JPEG, किंवा PNG फाइल)",
   "upload.removeFile": "फाइल काढा",
   "upload.quotaExceeded": "तुम्ही {{limit}} मोफत विश्लेषणांची मर्यादा गाठली आहे.",
   "upload.signInPrompt": "कागदपत्रांचे विश्लेषण करण्यासाठी आणि तुमचे अपलोड ट्रॅक करण्यासाठी तुमच्या Google खात्याने साइन इन करा.",

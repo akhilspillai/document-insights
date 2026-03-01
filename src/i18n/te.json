@@ -14,9 +14,9 @@
   "upload.analyzeAnother": "మరో పత్రాన్ని విశ్లేషించండి",
 
   "upload.dropHeading": "మీ పత్రాన్ని ఇక్కడ వదలండి లేదా బ్రౌజ్ చేయడానికి క్లిక్ చేయండి",
-  "upload.supportedFiles": "PDF, Word మరియు టెక్స్ట్ ఫైళ్ళకు మద్దతు ఉంది",
+  "upload.supportedFiles": "PDF, Word, టెక్స్ట్, JPEG మరియు PNG ఫైళ్ళకు మద్దతు ఉంది",
   "upload.chooseFile": "ఫైల్ ఎంచుకోండి",
-  "upload.invalidFile": "దయచేసి చెల్లుబాటు అయ్యే పత్రాన్ని అప్‌లోడ్ చేయండి (PDF, Word, లేదా టెక్స్ట్ ఫైల్)",
+  "upload.invalidFile": "దయచేసి చెల్లుబాటు అయ్యే పత్రాన్ని అప్‌లోడ్ చేయండి (PDF, Word, టెక్స్ట్, JPEG, లేదా PNG ఫైల్)",
   "upload.removeFile": "ఫైల్ తొలగించండి",
   "upload.quotaExceeded": "మీరు {{limit}} ఉచిత విశ్లేషణల పరిమితిని చేరుకున్నారు.",
   "upload.signInPrompt": "పత్రాలను విశ్లేషించడానికి మరియు మీ అప్‌లోడ్‌లను ట్రాక్ చేయడానికి మీ Google ఖాతాతో సైన్ ఇన్ చేయండి.",

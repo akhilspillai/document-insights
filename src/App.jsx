@@ -8,6 +8,8 @@ import ProcessingStatus from './components/ProcessingStatus'
 import AuthMenu from './components/AuthMenu'
 import { useTranslation } from './i18n/LanguageContext.jsx'
 import { useTheme } from './lib/ThemeContext.jsx'
+import logo from './assets/logo.png'
+import logoDark from './assets/logo-dark.png'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
@@ -54,6 +56,7 @@ function LanguageToggle() {
 
 function App() {
   const { t, language } = useTranslation()
+  const { isDark } = useTheme()
   const [insights, setInsights] = useState(null)
   const [loading, setLoading] = useState(false)
   const [processingStatus, setProcessingStatus] = useState(null)
@@ -270,9 +273,12 @@ function App() {
       {/* App header bar */}
       <header className="fixed top-0 inset-x-0 z-20 bg-bg-primary border-b border-border-base shadow-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3 gap-4">
-          <span className="text-text-primary font-semibold tracking-tight">
-            {t('header.title')}
-          </span>
+          <div className="flex items-center gap-2">
+            <img src={isDark ? logoDark : logo} alt="Document Insights" className="h-8 w-8 object-contain" />
+            <span className="text-text-primary font-semibold tracking-tight">
+              {t('header.title')}
+            </span>
+          </div>
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <LanguageToggle />
@@ -400,10 +406,10 @@ function App() {
                           className={
                             'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ' +
                             (upload.category === 'Urgent / penalty risk'
-                              ? 'bg-red-500/15 text-red-300 border border-red-500/30'
+                              ? 'bg-red-100 text-red-700 border border-red-300 dark:bg-red-500/15 dark:text-red-300 dark:border-red-500/30'
                               : upload.category === 'Action required'
-                              ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                              : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30')
+                              ? 'bg-amber-100 text-amber-700 border border-amber-300 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30'
+                              : 'bg-emerald-100 text-emerald-700 border border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30')
                           }
                         >
                           {categoryLabel(upload.category)}
@@ -425,21 +431,21 @@ function App() {
                       <p className="text-text-secondary">{t('summary.informational')}</p>
                       <p className="text-xs text-text-faint">{t('summary.informationalSub')}</p>
                     </div>
-                    <span className="text-lg font-semibold text-emerald-300">{informationalCount}</span>
+                    <span className="text-lg font-semibold text-emerald-700 dark:text-emerald-300">{informationalCount}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-xl bg-bg-elevated px-4 py-3">
                     <div>
                       <p className="text-text-secondary">{t('summary.actionRequired')}</p>
                       <p className="text-xs text-text-faint">{t('summary.actionRequiredSub')}</p>
                     </div>
-                    <span className="text-lg font-semibold text-amber-300">{actionRequiredCount}</span>
+                    <span className="text-lg font-semibold text-amber-700 dark:text-amber-300">{actionRequiredCount}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-xl bg-bg-elevated px-4 py-3">
                     <div>
                       <p className="text-text-secondary">{t('summary.urgent')}</p>
                       <p className="text-xs text-text-faint">{t('summary.urgentSub')}</p>
                     </div>
-                    <span className="text-lg font-semibold text-red-300">{urgentCount}</span>
+                    <span className="text-lg font-semibold text-red-700 dark:text-red-300">{urgentCount}</span>
                   </div>
                 </div>
                 <div className="mt-4 border-t border-border-base pt-3 text-xs text-text-faint">

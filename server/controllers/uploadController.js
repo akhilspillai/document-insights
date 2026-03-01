@@ -2,6 +2,8 @@ import { logger } from 'firebase-functions';
 import { uploadFile, getFileUrl } from '../services/backblazeService.js';
 import { saveDocumentMetadata, updateDocumentAnalysis, getUserAnalysisCount, incrementAnalysisCount } from '../services/firestoreService.js';
 import { extractTextFromPdf } from '../services/pdfService.js';
+import { runOcrOnBuffer } from '../services/ocrService.js';
+import { cleanExtractedText } from '../services/textCleaningService.js';
 import { analyzeDocument } from '../services/grokService.js';
 import { config } from '../config.js';
 
@@ -42,25 +44,68 @@ export const UploadController = {
 
       let analysis = null;
 
-      // Extract text and analyze if it's a PDF
       if (mimetype === 'application/pdf') {
+        // ------------------------------------------------------------------
+        // PDF path: native extraction with automatic OCR fallback for scanned
+        // documents. pdfService handles the fallback decision internally.
+        // ------------------------------------------------------------------
         try {
-          // Extract text from PDF
-          const pdfData = await extractTextFromPdf(buffer);
+          const pdfData = await extractTextFromPdf(buffer, language);
 
-          if (pdfData.text && pdfData.text.trim().length > 0) {
-            // Analyze with Grok
-            analysis = await analyzeDocument(pdfData.text, language);
+          logger.info('PDF extraction complete', {
+            file: originalname,
+            extractionMethod: pdfData.extractionMethod,
+            rawCharCount: pdfData.text.length,
+          });
 
-            // Update Firestore with analysis
+          const cleanedText = cleanExtractedText(pdfData.text);
+
+          if (cleanedText.length > 0) {
+            analysis = await analyzeDocument(cleanedText, language);
             await updateDocumentAnalysis(result.fileId, analysis);
-
-            // Increment user's analysis count
             await incrementAnalysisCount(userId);
+          } else {
+            logger.warn('PDF yielded no usable text after cleaning', {
+              file: originalname,
+              extractionMethod: pdfData.extractionMethod,
+            });
           }
-        } catch (analysisError) {
-          logger.error('PDF analysis failed', { error: analysisError.message, file: originalname });
-          // Don't fail the upload if analysis fails
+        } catch (pdfError) {
+          logger.error('PDF analysis failed', {
+            error: pdfError.message,
+            file: originalname,
+          });
+          // Do not fail the upload if analysis fails
+        }
+      } else if (mimetype === 'image/jpeg' || mimetype === 'image/png') {
+        // ------------------------------------------------------------------
+        // Image path: run OCR directly on the uploaded image buffer.
+        // ------------------------------------------------------------------
+        try {
+          const rawOcrText = await runOcrOnBuffer(buffer, language);
+
+          logger.info('Image OCR complete', {
+            file: originalname,
+            rawCharCount: rawOcrText.length,
+          });
+
+          const cleanedText = cleanExtractedText(rawOcrText);
+
+          if (cleanedText.length > 0) {
+            analysis = await analyzeDocument(cleanedText, language);
+            await updateDocumentAnalysis(result.fileId, analysis);
+            await incrementAnalysisCount(userId);
+          } else {
+            logger.warn('Image OCR yielded no usable text after cleaning', {
+              file: originalname,
+            });
+          }
+        } catch (ocrError) {
+          logger.error('Image OCR failed', {
+            error: ocrError.message,
+            file: originalname,
+          });
+          // Do not fail the upload if OCR fails
         }
       }
 
