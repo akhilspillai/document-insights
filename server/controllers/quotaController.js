@@ -5,6 +5,11 @@ import { config } from '../config.js';
 export const QuotaController = {
   async getQuota(req, res) {
     try {
+      // Whitelisted users are exempt from quota
+      if (config.whitelistedUserIds.includes(req.userId)) {
+        return res.json({ used: 0, limit: null, remaining: Infinity });
+      }
+
       const used = await getUserAnalysisCount(req.userId);
       res.json({
         used,

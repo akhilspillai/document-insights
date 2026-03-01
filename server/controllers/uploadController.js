@@ -18,15 +18,17 @@ export const UploadController = {
       const userId = req.userId;
       const language = req.body?.language || config.defaultLanguage;
 
-      // Check quota before processing
-      const currentCount = await getUserAnalysisCount(userId);
-      if (currentCount >= config.analysisLimit) {
-        return res.status(403).json({
-          error: 'Analysis quota exceeded',
-          message: `You have reached the limit of ${config.analysisLimit} document analyses.`,
-          used: currentCount,
-          limit: config.analysisLimit,
-        });
+      // Check quota before processing (whitelisted users are exempt)
+      if (!config.whitelistedUserIds.includes(userId)) {
+        const currentCount = await getUserAnalysisCount(userId);
+        if (currentCount >= config.analysisLimit) {
+          return res.status(403).json({
+            error: 'Analysis quota exceeded',
+            message: `You have reached the limit of ${config.analysisLimit} document analyses.`,
+            used: currentCount,
+            limit: config.analysisLimit,
+          });
+        }
       }
 
       // Upload to Backblaze B2

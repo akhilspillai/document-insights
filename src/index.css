@@ -15,32 +15,124 @@
   --color-text-faint:     var(--text-faint);
   --color-border-base:    var(--border-base);
   --color-border-strong:  var(--border-strong);
+
+  /* Accent palette */
+  --color-accent:         var(--accent);
+  --color-accent-dim:     var(--accent-dim);
+  --color-accent-glow:    var(--accent-glow);
 }
 
-/* Light mode (default) */
+/* ─── Light mode (default) ─────────────────────────────────────── */
 :root {
-  --bg-base:        #F5F7FA;
+  --bg-base:        #F2F4F8;
   --bg-primary:     #FFFFFF;
-  --bg-secondary:   #ECEEF3;
-  --bg-elevated:    rgba(236,238,243,0.7);
-  --text-primary:   #0F1729;
-  --text-secondary: #374151;
-  --text-muted:     #6B7280;
-  --text-faint:     #9CA3AF;
-  --border-base:    #E2E5ED;
-  --border-strong:  #C8CDD9;
+  --bg-secondary:   #F0F2F6;
+  --bg-elevated:    #E8EBF2;
+  --text-primary:   #0D1321;
+  --text-secondary: #2D3748;
+  --text-muted:     #5A6478;
+  --text-faint:     #94A0B8;
+  --border-base:    #DDE1EA;
+  --border-strong:  #BCC3D4;
+
+  --accent:         #3B6FFF;
+  --accent-dim:     rgba(59,111,255,0.10);
+  --accent-glow:    rgba(59,111,255,0.20);
 }
 
-/* Dark mode — activated by html.dark */
+/* ─── Dark mode — activated by html.dark ──────────────────────── */
 .dark {
-  --bg-base:        #0B0F1A;
-  --bg-primary:     #1A2035;
+  /* Matches opencloudforce: deep navy background */
+  --bg-base:        #080C14;
+  --bg-primary:     #0E1422;
   --bg-secondary:   #111827;
-  --bg-elevated:    rgba(26,32,53,0.7);
-  --text-primary:   #F1F5FE;
-  --text-secondary: #CBD5E1;
-  --text-muted:     #94A3B8;
-  --text-faint:     #64748B;
-  --border-base:    #1E293B;
-  --border-strong:  #334155;
+  --bg-elevated:    rgba(20,28,48,0.85);
+  --text-primary:   #EEF2FF;
+  --text-secondary: #C4CEEA;
+  --text-muted:     #7B8BAC;
+  --text-faint:     #4A5468;
+  --border-base:    rgba(255,255,255,0.07);
+  --border-strong:  rgba(255,255,255,0.13);
+
+  --accent:         #5B8BFF;
+  --accent-dim:     rgba(91,139,255,0.12);
+  --accent-glow:    rgba(91,139,255,0.22);
+}
+
+/* ─── Base styles ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-optical-sizing: auto;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  letter-spacing: -0.015em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* ─── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-faint);
+}
+
+/* ─── Selection ────────────────────────────────────────────────── */
+::selection {
+  background: var(--accent-dim);
+  color: var(--text-primary);
+}
+
+/* ─── Utility: gradient text ───────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #5B8BFF 0%, #A78BFA 60%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .gradient-text {
+  background: linear-gradient(135deg, #7BA7FF 0%, #C4B5FD 60%, #67D8F8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Utility: card glow ───────────────────────────────────────── */
+.card-glow {
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.dark .card-glow {
+  box-shadow: 0 4px 40px rgba(0,0,0,0.45), 0 0 80px -20px var(--accent-glow);
+}
+
+/* ─── Utility: glass surface ───────────────────────────────────── */
+.glass {
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
 }

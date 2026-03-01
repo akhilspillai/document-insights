@@ -12,6 +12,8 @@ export const config = {
 
   // Quota
   analysisLimit: 5,
+  // Users exempt from analysis quota
+  whitelistedUserIds: ['Un1c9UWWcbNrZHGFd1CMvJiCHnU2'],
 
   // Document queries
   documentsQueryLimit: 20,
