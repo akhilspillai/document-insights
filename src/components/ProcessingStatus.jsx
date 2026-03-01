@@ -49,26 +49,26 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
   if (error) {
     return (
       <div className="w-full max-w-2xl mx-auto">
-        <div className="bg-slate-900 border border-red-700/60 rounded-2xl p-8 text-center">
+        <div className="bg-bg-primary border border-red-700/60 rounded-2xl p-8 text-center">
           <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/30">
             <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
 
-          <h3 className="text-xl font-semibold text-slate-50 mb-2">{t('processing.errorHeading')}</h3>
-          <p className="text-slate-400 mb-6 max-w-md mx-auto">{error}</p>
+          <h3 className="text-xl font-semibold text-text-primary mb-2">{t('processing.errorHeading')}</h3>
+          <p className="text-text-muted mb-6 max-w-md mx-auto">{error}</p>
 
           {fileName && (
-            <p className="text-xs text-slate-500 mb-6">
-              {t('processing.errorFile')} <span className="text-slate-400">{fileName}</span>
+            <p className="text-xs text-text-faint mb-6">
+              {t('processing.errorFile')} <span className="text-text-muted">{fileName}</span>
             </p>
           )}
 
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={onCancel}
-              className="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 transition-colors border border-slate-700"
+              className="px-5 py-2.5 rounded-xl bg-bg-secondary text-text-secondary text-sm font-medium hover:bg-bg-elevated transition-colors border border-border-base"
             >
               {t('processing.goBack')}
             </button>
@@ -80,9 +80,9 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
             </button>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-slate-800">
-            <p className="text-xs text-slate-500">{t('processing.commonIssues')}</p>
-            <ul className="mt-2 text-xs text-slate-400 space-y-1">
+          <div className="mt-8 pt-6 border-t border-border-base">
+            <p className="text-xs text-text-faint">{t('processing.commonIssues')}</p>
+            <ul className="mt-2 text-xs text-text-muted space-y-1">
               <li>{t('processing.issue1')}</li>
               <li>{t('processing.issue2')}</li>
               <li>{t('processing.issue3')}</li>
@@ -95,7 +95,7 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+      <div className="bg-bg-primary border border-border-base rounded-2xl p-8">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/30">
@@ -105,9 +105,9 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
               </svg>
             </div>
           </div>
-          <h3 className="text-xl font-semibold text-slate-50 mb-2">{t('processing.heading')}</h3>
+          <h3 className="text-xl font-semibold text-text-primary mb-2">{t('processing.heading')}</h3>
           {fileName && (
-            <p className="text-sm text-slate-400">{fileName}</p>
+            <p className="text-sm text-text-muted">{fileName}</p>
           )}
         </div>
 
@@ -126,7 +126,7 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
                     ? 'bg-blue-500/10 border border-blue-500/30'
                     : isComplete
                     ? 'bg-emerald-500/5 border border-emerald-500/20'
-                    : 'bg-slate-800/50 border border-slate-800'
+                    : 'bg-bg-elevated border border-border-base'
                 }`}
               >
                 <div
@@ -135,7 +135,7 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
                       ? 'bg-blue-500/20'
                       : isComplete
                       ? 'bg-emerald-500/20'
-                      : 'bg-slate-800'
+                      : 'bg-bg-secondary'
                   }`}
                 >
                   {isActive ? (
@@ -155,13 +155,13 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
                         ? 'text-blue-300'
                         : isComplete
                         ? 'text-emerald-300'
-                        : 'text-slate-500'
+                        : 'text-text-faint'
                     }`}
                   >
                     {stage.label}
                   </p>
                   {isActive && (
-                    <p className="text-xs text-slate-400 mt-0.5">{t('processing.pleaseWait')}</p>
+                    <p className="text-xs text-text-muted mt-0.5">{t('processing.pleaseWait')}</p>
                   )}
                 </div>
                 {isComplete && (
@@ -176,15 +176,15 @@ const ProcessingStatus = ({ status, error, fileName, onRetry, onCancel }) => {
         <div className="mt-8 text-center">
           <button
             onClick={onCancel}
-            className="text-sm text-slate-400 hover:text-slate-300 transition-colors"
+            className="text-sm text-text-muted hover:text-text-secondary transition-colors"
           >
             {t('processing.cancel')}
           </button>
         </div>
 
         {/* Info */}
-        <div className="mt-6 pt-6 border-t border-slate-800 text-center">
-          <p className="text-xs text-slate-500">
+        <div className="mt-6 pt-6 border-t border-border-base text-center">
+          <p className="text-xs text-text-faint">
             {t('processing.timeEstimate')}
           </p>
         </div>

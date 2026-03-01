@@ -8,11 +8,11 @@ const DocumentInsights = ({ insights, loading }) => {
     return (
       <div className="w-full max-w-4xl mx-auto">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-slate-700 rounded w-1/3"></div>
+          <div className="h-8 bg-bg-secondary rounded w-1/3"></div>
           <div className="space-y-4">
-            <div className="h-4 bg-slate-700 rounded"></div>
-            <div className="h-4 bg-slate-700 rounded w-5/6"></div>
-            <div className="h-4 bg-slate-700 rounded w-4/6"></div>
+            <div className="h-4 bg-bg-secondary rounded"></div>
+            <div className="h-4 bg-bg-secondary rounded w-5/6"></div>
+            <div className="h-4 bg-bg-secondary rounded w-4/6"></div>
           </div>
         </div>
       </div>
@@ -25,30 +25,30 @@ const DocumentInsights = ({ insights, loading }) => {
 
   const InsightSection = ({ title, icon, accent, children, className = "" }) => (
     <div
-      className={`relative overflow-hidden rounded-2xl border p-6 bg-gradient-to-br ${
+      className={`relative overflow-hidden rounded-2xl border p-6 bg-bg-primary border-border-base ${
         accent === 'blue'
-          ? 'from-slate-900 via-slate-950 to-slate-900 border-sky-700/60'
+          ? 'dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 dark:border-sky-700/60'
           : accent === 'green'
-          ? 'from-slate-900 via-emerald-950/40 to-slate-900 border-emerald-700/60'
+          ? 'dark:bg-gradient-to-br dark:from-slate-900 dark:via-emerald-950/40 dark:to-slate-900 dark:border-emerald-700/60'
           : accent === 'purple'
-          ? 'from-slate-900 via-violet-950/40 to-slate-900 border-violet-700/60'
+          ? 'dark:bg-gradient-to-br dark:from-slate-900 dark:via-violet-950/40 dark:to-slate-900 dark:border-violet-700/60'
           : accent === 'red'
-          ? 'from-slate-900 via-rose-950/40 to-slate-900 border-rose-700/60'
+          ? 'dark:bg-gradient-to-br dark:from-slate-900 dark:via-rose-950/40 dark:to-slate-900 dark:border-rose-700/60'
           : accent === 'orange'
-          ? 'from-slate-900 via-amber-950/40 to-slate-900 border-amber-700/60'
+          ? 'dark:bg-gradient-to-br dark:from-slate-900 dark:via-amber-950/40 dark:to-slate-900 dark:border-amber-700/60'
           : accent === 'cyan'
-          ? 'from-slate-900 via-cyan-950/40 to-slate-900 border-cyan-700/60'
-          : 'from-slate-900 via-slate-950 to-slate-900 border-slate-800'
+          ? 'dark:bg-gradient-to-br dark:from-slate-900 dark:via-cyan-950/40 dark:to-slate-900 dark:border-cyan-700/60'
+          : 'dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 dark:border-slate-800'
       } ${className}`}
     >
-      <div className="pointer-events-none absolute inset-x-12 -top-24 h-48 rounded-full bg-gradient-to-b from-white/10 to-transparent blur-3xl" />
+      <div className="pointer-events-none absolute inset-x-12 -top-24 h-48 rounded-full dark:bg-gradient-to-b dark:from-white/10 dark:to-transparent blur-3xl" />
       <div className="relative flex items-center space-x-3 mb-4">
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-slate-900/60 border border-white/10 text-sky-300">
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-bg-secondary dark:bg-slate-900/60 border border-border-base dark:border-white/10 text-sky-300">
           {icon}
         </div>
-        <h3 className="text-lg font-semibold text-slate-50">{title}</h3>
+        <h3 className="text-lg font-semibold text-text-primary">{title}</h3>
       </div>
-      <div className="relative text-sm text-slate-200 leading-relaxed">
+      <div className="relative text-sm text-text-secondary leading-relaxed">
         {children}
       </div>
     </div>
@@ -60,22 +60,22 @@ const DocumentInsights = ({ insights, loading }) => {
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between gap-4">
+      <div className="bg-bg-primary border border-border-base rounded-2xl p-5 flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-50 mb-1">{t('insights.heading')}</h2>
-          <p className="text-sm text-slate-400">{t('insights.subtitle')}</p>
+          <h2 className="text-2xl font-bold text-text-primary mb-1">{t('insights.heading')}</h2>
+          <p className="text-sm text-text-muted">{t('insights.subtitle')}</p>
         </div>
         <div className="hidden sm:flex items-center gap-2 text-xs">
           <span className={`inline-flex items-center rounded-full px-3 py-1 border ${
             riskLevel === 'high'
-              ? 'bg-red-500/10 text-red-300 border-red-500/30'
+              ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-300 dark:border-red-500/30'
               : riskLevel === 'medium'
-              ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
-              : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+              ? 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/30'
+              : 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/30'
           }`}>
             {riskLevel === 'high' ? t('insights.riskHigh') : riskLevel === 'medium' ? t('insights.riskMedium') : t('insights.riskLow')}
           </span>
-          <span className="inline-flex items-center rounded-full bg-sky-500/10 text-sky-300 px-3 py-1 border border-sky-500/40">
+          <span className="inline-flex items-center rounded-full bg-indigo-50 text-indigo-800 px-3 py-1 border border-indigo-200 dark:bg-sky-500/10 dark:text-sky-300 dark:border-sky-500/40">
             {t('insights.notLegalAdvice')}
           </span>
         </div>
@@ -92,12 +92,12 @@ const DocumentInsights = ({ insights, loading }) => {
         }
       >
         <div className="space-y-2">
-          <p className="font-medium text-slate-50">{insights.document_type}</p>
+          <p className="font-medium text-text-primary">{insights.document_type}</p>
           {insights.issuer && (
-            <p className="text-slate-400">{t('insights.issuedBy')} <span className="text-slate-200">{insights.issuer}</span></p>
+            <p className="text-text-muted">{t('insights.issuedBy')} <span className="text-text-secondary">{insights.issuer}</span></p>
           )}
           {insights.summary_simple && (
-            <p className="mt-3 text-slate-300">{insights.summary_simple}</p>
+            <p className="mt-3 text-text-secondary">{insights.summary_simple}</p>
           )}
         </div>
       </InsightSection>
@@ -132,7 +132,7 @@ const DocumentInsights = ({ insights, loading }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {insights.key_details.amounts?.length > 0 && (
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">{t('insights.amounts')}</p>
+                <p className="text-xs uppercase tracking-wide text-text-muted mb-2">{t('insights.amounts')}</p>
                 <ul className="space-y-1">
                   {insights.key_details.amounts.map((amount, i) => (
                     <li key={i} className="text-cyan-300 font-medium">{amount}</li>
@@ -142,7 +142,7 @@ const DocumentInsights = ({ insights, loading }) => {
             )}
             {insights.key_details.dates?.length > 0 && (
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">{t('insights.dates')}</p>
+                <p className="text-xs uppercase tracking-wide text-text-muted mb-2">{t('insights.dates')}</p>
                 <ul className="space-y-1">
                   {insights.key_details.dates.map((date, i) => (
                     <li key={i} className="text-amber-300">{date}</li>
@@ -152,10 +152,10 @@ const DocumentInsights = ({ insights, loading }) => {
             )}
             {insights.key_details.reference_numbers?.length > 0 && (
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-2">{t('insights.referenceNumbers')}</p>
+                <p className="text-xs uppercase tracking-wide text-text-muted mb-2">{t('insights.referenceNumbers')}</p>
                 <ul className="space-y-1">
                   {insights.key_details.reference_numbers.map((ref, i) => (
-                    <li key={i} className="font-mono text-slate-300">{ref}</li>
+                    <li key={i} className="font-mono text-text-secondary">{ref}</li>
                   ))}
                 </ul>
               </div>
@@ -182,12 +182,12 @@ const DocumentInsights = ({ insights, loading }) => {
                   {index + 1}
                 </span>
                 <div className="flex-1 space-y-1">
-                  <p className="font-medium text-slate-50">{item.action}</p>
+                  <p className="font-medium text-text-primary">{item.action}</p>
                   {item.deadline && (
                     <p className="text-xs text-amber-300">{t('insights.deadline', { deadline: item.deadline })}</p>
                   )}
                   {item.how_to_do_it && (
-                    <p className="text-slate-400 text-xs">{item.how_to_do_it}</p>
+                    <p className="text-text-muted text-xs">{item.how_to_do_it}</p>
                   )}
                 </div>
               </li>
@@ -211,10 +211,10 @@ const DocumentInsights = ({ insights, loading }) => {
           <div className="space-y-2">
             <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
               riskLevel === 'high'
-                ? 'bg-red-500/20 text-red-200 border border-red-400/60'
+                ? 'bg-red-50 text-red-700 border border-red-200 dark:bg-red-500/20 dark:text-red-200 dark:border-red-400/60'
                 : riskLevel === 'medium'
-                ? 'bg-amber-500/15 text-amber-200 border border-amber-400/60'
-                : 'bg-emerald-500/15 text-emerald-200 border border-emerald-400/60'
+                ? 'bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-500/15 dark:text-amber-200 dark:border-amber-400/60'
+                : 'bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-200 dark:border-emerald-400/60'
             }`}>
               {riskLevel === 'high' ? t('insights.riskHighAct') : riskLevel === 'medium' ? t('insights.riskMediumAct') : t('insights.riskLowAct')}
             </span>
@@ -233,10 +233,10 @@ const DocumentInsights = ({ insights, loading }) => {
           <div className="space-y-2">
             <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
               professionalHelp === 'yes'
-                ? 'bg-red-500/20 text-red-200 border border-red-400/60'
+                ? 'bg-red-50 text-red-700 border border-red-200 dark:bg-red-500/20 dark:text-red-200 dark:border-red-400/60'
                 : professionalHelp === 'maybe'
-                ? 'bg-amber-500/15 text-amber-200 border border-amber-400/60'
-                : 'bg-emerald-500/15 text-emerald-200 border border-emerald-400/60'
+                ? 'bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-500/15 dark:text-amber-200 dark:border-amber-400/60'
+                : 'bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-200 dark:border-emerald-400/60'
             }`}>
               {professionalHelp === 'yes'
                 ? t('insights.professionalYes')
@@ -278,8 +278,8 @@ const DocumentInsights = ({ insights, loading }) => {
           <ul className="space-y-2">
             {insights.missing_or_unclear_info.map((item, index) => (
               <li key={index} className="flex items-start space-x-2">
-                <span className="text-slate-500 mt-1">•</span>
-                <span className="text-slate-400">{item}</span>
+                <span className="text-text-faint mt-1">•</span>
+                <span className="text-text-muted">{item}</span>
               </li>
             ))}
           </ul>
@@ -288,8 +288,8 @@ const DocumentInsights = ({ insights, loading }) => {
 
       {/* Confidence Notes */}
       {insights.confidence_notes && (
-        <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 text-xs text-slate-500">
-          <span className="font-medium text-slate-400">{t('insights.aiNote')}</span> {insights.confidence_notes}
+        <div className="bg-bg-secondary border border-border-base rounded-xl p-4 text-xs text-text-faint">
+          <span className="font-medium text-text-muted">{t('insights.aiNote')}</span> {insights.confidence_notes}
         </div>
       )}
     </div>

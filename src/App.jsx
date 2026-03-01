@@ -7,8 +7,31 @@ import DocumentInsights from './components/DocumentInsights'
 import ProcessingStatus from './components/ProcessingStatus'
 import AuthMenu from './components/AuthMenu'
 import { useTranslation } from './i18n/LanguageContext.jsx'
+import { useTheme } from './lib/ThemeContext.jsx'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+
+function ThemeToggle() {
+  const { isDark, toggleTheme } = useTheme()
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="h-9 w-9 inline-flex items-center justify-center rounded-full border border-border-base bg-bg-secondary text-text-secondary hover:bg-bg-elevated transition-colors"
+      aria-label="Toggle theme"
+    >
+      {isDark ? (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1m-16 0H1m15.364 1.636l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ) : (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+      )}
+    </button>
+  )
+}
 
 function LanguageToggle() {
   const { language, setLanguage, languages } = useTranslation()
@@ -18,10 +41,10 @@ function LanguageToggle() {
     <select
       value={language}
       onChange={(e) => setLanguage(e.target.value)}
-      className="text-xs font-medium rounded-full bg-white/10 text-blue-50 px-2.5 py-1 border border-white/20 cursor-pointer hover:bg-white/20 transition-colors appearance-none text-center"
+      className="text-xs font-medium rounded-full bg-bg-secondary text-text-secondary px-2.5 py-1 border border-border-base cursor-pointer hover:bg-bg-elevated transition-colors appearance-none text-center"
     >
       {langKeys.map((key) => (
-        <option key={key} value={key} className="bg-slate-900 text-slate-50">
+        <option key={key} value={key} className="bg-bg-primary text-text-primary">
           {languages[key].nativeLabel}
         </option>
       ))}
@@ -243,16 +266,17 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-16 pb-10 px-4">
+    <div className="min-h-screen bg-bg-base pt-16 pb-10 px-4">
       {/* App header bar */}
-      <header className="fixed top-0 inset-x-0 z-20 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 shadow-md/80 border-b border-white/10">
+      <header className="fixed top-0 inset-x-0 z-20 bg-bg-primary border-b border-border-base shadow-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3 gap-4">
-          <span className="text-white font-semibold tracking-tight">
+          <span className="text-text-primary font-semibold tracking-tight">
             {t('header.title')}
           </span>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <LanguageToggle />
-            <span className="hidden sm:inline-flex text-[10px] font-medium uppercase tracking-wide rounded-full bg-white/10 text-blue-50 px-2.5 py-1 border border-white/20">
+            <span className="hidden sm:inline-flex text-[10px] font-medium uppercase tracking-wide rounded-full bg-bg-secondary text-text-faint px-2.5 py-1 border border-border-base">
               {t('header.beta')}
             </span>
             <AuthMenu />
@@ -262,20 +286,20 @@ function App() {
 
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Welcome card */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl shadow-lg p-8 text-white">
+        <div className="bg-bg-primary border border-border-base rounded-2xl shadow-sm p-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-3 text-text-primary">
                 {t('welcome.heading')}
               </h1>
-              <p className="text-sm md:text-base text-blue-100 max-w-2xl">
+              <p className="text-sm md:text-base text-text-muted max-w-2xl">
                 {t('welcome.description')}
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="bg-white/10 rounded-xl px-4 py-3 text-sm">
-                <div className="text-blue-100">{t('welcome.totalAnalyzed')}</div>
-                <div className="text-2xl font-semibold">{totalAnalyzed}</div>
+              <div className="bg-bg-elevated border border-border-base rounded-xl px-4 py-3 text-sm">
+                <div className="text-text-muted">{t('welcome.totalAnalyzed')}</div>
+                <div className="text-2xl font-semibold text-text-primary">{totalAnalyzed}</div>
               </div>
             </div>
           </div>
@@ -314,9 +338,9 @@ function App() {
           <main className="grid grid-cols-1 md:grid-cols-[2fr,1.2fr] gap-6 items-start">
             {/* Left column: upload + history */}
             <div className="space-y-6">
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg p-6">
-                <h2 className="text-lg font-semibold text-slate-50 mb-2">{t('upload.heading')}</h2>
-                <p className="text-sm text-slate-400 mb-4">
+              <div className="bg-bg-primary border border-border-base rounded-2xl shadow-lg p-6">
+                <h2 className="text-lg font-semibold text-text-primary mb-2">{t('upload.heading')}</h2>
+                <p className="text-sm text-text-muted mb-4">
                   {t('upload.description')}
                 </p>
                 {quota && quota.remaining <= 0 ? (
@@ -351,24 +375,24 @@ function App() {
                 )}
               </div>
 
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg p-6">
+              <div className="bg-bg-primary border border-border-base rounded-2xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-slate-50">{t('documents.heading')}</h2>
-                  <span className="text-xs text-slate-400">{t('documents.count', { count: uploads.length || 0 })}</span>
+                  <h2 className="text-lg font-semibold text-text-primary">{t('documents.heading')}</h2>
+                  <span className="text-xs text-text-muted">{t('documents.count', { count: uploads.length || 0 })}</span>
                 </div>
                 {uploads.length === 0 ? (
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-text-muted">
                     {t('documents.empty')}
                   </p>
                 ) : (
-                  <ul className="divide-y divide-slate-800">
+                  <ul className="divide-y divide-border-base">
                     {uploads.map((upload) => (
                       <li key={upload.id} className="py-3 flex items-center justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-slate-50 truncate">
+                          <p className="text-sm font-medium text-text-primary truncate">
                             {upload.name}
                           </p>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-text-muted">
                             {new Date(upload.uploadedAt).toLocaleString()}
                           </p>
                         </div>
@@ -393,32 +417,32 @@ function App() {
 
             {/* Right column: stats */}
             <aside className="space-y-6">
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg p-6">
-                <h2 className="text-lg font-semibold text-slate-50 mb-4">{t('summary.heading')}</h2>
+              <div className="bg-bg-primary border border-border-base rounded-2xl shadow-lg p-6">
+                <h2 className="text-lg font-semibold text-text-primary mb-4">{t('summary.heading')}</h2>
                 <div className="grid grid-cols-1 gap-3 text-sm">
-                  <div className="flex items-center justify-between rounded-xl bg-slate-800/70 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-xl bg-bg-elevated px-4 py-3">
                     <div>
-                      <p className="text-slate-300">{t('summary.informational')}</p>
-                      <p className="text-xs text-slate-500">{t('summary.informationalSub')}</p>
+                      <p className="text-text-secondary">{t('summary.informational')}</p>
+                      <p className="text-xs text-text-faint">{t('summary.informationalSub')}</p>
                     </div>
                     <span className="text-lg font-semibold text-emerald-300">{informationalCount}</span>
                   </div>
-                  <div className="flex items-center justify-between rounded-xl bg-slate-800/70 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-xl bg-bg-elevated px-4 py-3">
                     <div>
-                      <p className="text-slate-300">{t('summary.actionRequired')}</p>
-                      <p className="text-xs text-slate-500">{t('summary.actionRequiredSub')}</p>
+                      <p className="text-text-secondary">{t('summary.actionRequired')}</p>
+                      <p className="text-xs text-text-faint">{t('summary.actionRequiredSub')}</p>
                     </div>
                     <span className="text-lg font-semibold text-amber-300">{actionRequiredCount}</span>
                   </div>
-                  <div className="flex items-center justify-between rounded-xl bg-slate-800/70 px-4 py-3">
+                  <div className="flex items-center justify-between rounded-xl bg-bg-elevated px-4 py-3">
                     <div>
-                      <p className="text-slate-300">{t('summary.urgent')}</p>
-                      <p className="text-xs text-slate-500">{t('summary.urgentSub')}</p>
+                      <p className="text-text-secondary">{t('summary.urgent')}</p>
+                      <p className="text-xs text-text-faint">{t('summary.urgentSub')}</p>
                     </div>
                     <span className="text-lg font-semibold text-red-300">{urgentCount}</span>
                   </div>
                 </div>
-                <div className="mt-4 border-t border-slate-800 pt-3 text-xs text-slate-500">
+                <div className="mt-4 border-t border-border-base pt-3 text-xs text-text-faint">
                   {t('summary.disclaimer')}
                 </div>
               </div>

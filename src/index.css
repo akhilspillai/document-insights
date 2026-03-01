@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+/* Tailwind v4: class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Register tokens — Tailwind generates bg-bg-primary, text-text-primary etc. */
+@theme inline {
+  --color-bg-base:        var(--bg-base);
+  --color-bg-primary:     var(--bg-primary);
+  --color-bg-secondary:   var(--bg-secondary);
+  --color-bg-elevated:    var(--bg-elevated);
+  --color-text-primary:   var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted:     var(--text-muted);
+  --color-text-faint:     var(--text-faint);
+  --color-border-base:    var(--border-base);
+  --color-border-strong:  var(--border-strong);
+}
+
+/* Light mode (default) */
+:root {
+  --bg-base:        #F5F7FA;
+  --bg-primary:     #FFFFFF;
+  --bg-secondary:   #ECEEF3;
+  --bg-elevated:    rgba(236,238,243,0.7);
+  --text-primary:   #0F1729;
+  --text-secondary: #374151;
+  --text-muted:     #6B7280;
+  --text-faint:     #9CA3AF;
+  --border-base:    #E2E5ED;
+  --border-strong:  #C8CDD9;
+}
+
+/* Dark mode — activated by html.dark */
+.dark {
+  --bg-base:        #0B0F1A;
+  --bg-primary:     #1A2035;
+  --bg-secondary:   #111827;
+  --bg-elevated:    rgba(26,32,53,0.7);
+  --text-primary:   #F1F5FE;
+  --text-secondary: #CBD5E1;
+  --text-muted:     #94A3B8;
+  --text-faint:     #64748B;
+  --border-base:    #1E293B;
+  --border-strong:  #334155;
+}

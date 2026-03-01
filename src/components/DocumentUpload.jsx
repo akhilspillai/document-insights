@@ -62,12 +62,12 @@ const DocumentUpload = ({ onFileSelect, onAnalyze, disabled = false, quota, requ
     <div className="w-full">
       {!file ? (
         <div
-          className={`relative rounded-2xl p-8 text-center transition-all duration-200 border bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 ${
+          className={`relative rounded-2xl p-8 text-center transition-all duration-200 border bg-bg-secondary ${
             disabled
-              ? 'border-slate-800 opacity-60 cursor-not-allowed'
+              ? 'border-border-base opacity-60 cursor-not-allowed'
               : isDragging
                 ? 'border-blue-500/70 shadow-[0_0_0_1px_rgba(59,130,246,0.6)] ring-2 ring-blue-500/40 scale-[1.01]'
-                : 'border-slate-800 hover:border-slate-600 hover:shadow-lg cursor-pointer'
+                : 'border-border-base hover:border-border-strong hover:shadow-lg cursor-pointer'
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -100,10 +100,10 @@ const DocumentUpload = ({ onFileSelect, onAnalyze, disabled = false, quota, requ
             </div>
 
             <div className="drop-area-content">
-              <p className="text-lg font-medium text-slate-50">
+              <p className="text-lg font-medium text-text-primary">
                 {t('upload.dropHeading')}
               </p>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-text-muted mt-1">
                 {t('upload.supportedFiles')}
               </p>
             </div>
@@ -120,7 +120,7 @@ const DocumentUpload = ({ onFileSelect, onAnalyze, disabled = false, quota, requ
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl p-6 border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+        <div className="rounded-2xl p-6 border border-border-base bg-bg-secondary">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/30 shrink-0">
               <svg className="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,12 +128,12 @@ const DocumentUpload = ({ onFileSelect, onAnalyze, disabled = false, quota, requ
               </svg>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-slate-50 truncate">{file.name}</p>
-              <p className="text-xs text-slate-400">{(file.size / 1024).toFixed(1)} KB</p>
+              <p className="text-sm font-medium text-text-primary truncate">{file.name}</p>
+              <p className="text-xs text-text-muted">{(file.size / 1024).toFixed(1)} KB</p>
             </div>
             <button
               onClick={handleClearFile}
-              className="text-slate-400 hover:text-slate-200 transition-colors p-1"
+              className="text-text-muted hover:text-text-secondary transition-colors p-1"
               title={t('upload.removeFile')}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -155,7 +155,7 @@ const DocumentUpload = ({ onFileSelect, onAnalyze, disabled = false, quota, requ
           )}
 
           {quota && !quotaExceeded && !requiresSignIn && (
-            <p className="text-xs text-slate-400 mb-4">
+            <p className="text-xs text-text-muted mb-4">
               {t('upload.quotaRemaining', { remaining: quota.remaining, limit: quota.limit, analysisWord: quota.remaining === 1 ? t('analysis.one') : t('analysis.other') })}
             </p>
           )}
@@ -165,7 +165,7 @@ const DocumentUpload = ({ onFileSelect, onAnalyze, disabled = false, quota, requ
             disabled={quotaExceeded}
             className={`w-full py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
               quotaExceeded
-                ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                ? 'bg-bg-secondary text-text-faint cursor-not-allowed'
                 : 'bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 text-white shadow-md hover:shadow-lg hover:from-blue-400 hover:via-indigo-400 hover:to-purple-400'
             }`}
           >

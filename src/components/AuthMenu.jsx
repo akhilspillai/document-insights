@@ -58,7 +58,7 @@ const AuthMenu = () => {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/40 bg-white/10 text-white shadow-sm hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:ring-white/60"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border-base bg-bg-secondary text-text-secondary shadow-sm hover:bg-bg-elevated focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:ring-border-strong"
       >
         <span className="sr-only">{t('auth.openMenu')}</span>
         {user && displayInitial ? (
@@ -83,34 +83,34 @@ const AuthMenu = () => {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-xl p-4 z-30">
+        <div className="absolute right-0 mt-3 w-80 origin-top-right rounded-2xl bg-bg-primary/95 border border-border-strong shadow-xl p-4 z-30">
           {loading ? (
-            <p className="text-xs text-slate-400">{t('auth.checkingSession')}</p>
+            <p className="text-xs text-text-muted">{t('auth.checkingSession')}</p>
           ) : user && !isAnonymous ? (
             <>
               <div className="flex items-center gap-3 mb-3">
-                <div className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-semibold text-slate-100">
+                <div className="h-8 w-8 rounded-full bg-bg-secondary flex items-center justify-center text-xs font-semibold text-text-primary">
                   {displayInitial ?? '?'}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-50 truncate">{user.displayName ?? t('auth.signedIn')}</p>
+                  <p className="text-sm font-semibold text-text-primary truncate">{user.displayName ?? t('auth.signedIn')}</p>
                   {user.email && (
-                    <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                    <p className="text-xs text-text-muted truncate">{user.email}</p>
                   )}
                 </div>
               </div>
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="w-full rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-50 text-xs font-medium py-2 mt-1"
+                className="w-full rounded-lg bg-bg-secondary hover:bg-bg-elevated text-text-primary text-xs font-medium py-2 mt-1"
               >
                 {t('auth.signOut')}
               </button>
             </>
           ) : (
             <>
-              <p className="text-sm font-semibold text-slate-50 mb-2">{t('auth.signIn')}</p>
-              <p className="text-xs text-slate-400 mb-3">
+              <p className="text-sm font-semibold text-text-primary mb-2">{t('auth.signIn')}</p>
+              <p className="text-xs text-text-muted mb-3">
                 {t('auth.signInDescription')}
               </p>
               <button
