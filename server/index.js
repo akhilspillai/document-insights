@@ -100,6 +100,7 @@ app.use(express.json({ type: 'application/json' }));
 
 // Document dashboard route (requires auth)
 app.get('/api/documents', authMiddleware, DocumentsController.getDashboard);
+app.get('/api/documents/:id', authMiddleware, DocumentsController.getDocument);
 
 // File upload route (requires auth)
 app.post('/api/upload', authMiddleware, parseMultipart, UploadController.uploadDocument);

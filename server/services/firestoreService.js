@@ -90,3 +90,30 @@ export async function incrementAnalysisCount(userId) {
 
   return newCount;
 }
+
+export async function getDocumentById(userId, docId) {
+  const db = getFirestoreDb();
+
+  const docSnap = await db.collection('documents').doc(docId).get();
+
+  if (!docSnap.exists) {
+    const err = new Error('Document not found');
+    err.status = 404;
+    throw err;
+  }
+
+  const data = docSnap.data();
+
+  if (data.userId !== userId) {
+    const err = new Error('Document not found');
+    err.status = 404;
+    throw err;
+  }
+
+  return {
+    id: docSnap.id,
+    originalFilename: data.originalFilename,
+    analysis: data.analysis,
+    createdAt: data.createdAt,
+  };
+}

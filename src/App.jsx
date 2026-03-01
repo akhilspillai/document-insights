@@ -69,6 +69,7 @@ function App() {
   const [authReady, setAuthReady] = useState(false)
   const [quota, setQuota] = useState(null)
   const [summary, setSummary] = useState({ informational: 0, actionRequired: 0, urgent: 0 })
+  const [loadingDocId, setLoadingDocId] = useState(null)
 
   const isGoogleUser = user && !user.isAnonymous
 
@@ -258,6 +259,22 @@ function App() {
     setCurrentFile(null)
   }
 
+  const handleViewDocument = async (upload) => {
+    setLoadingDocId(upload.id)
+    try {
+      const headers = await getAuthHeaders()
+      const res = await fetch(`${API_BASE}/api/documents/${upload.id}`, { headers })
+      if (!res.ok) throw new Error('Failed to load document')
+      const data = await res.json()
+      setCurrentFileName(upload.name)
+      setInsights(data.analysis)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoadingDocId(null)
+    }
+  }
+
   const informationalCount = summary.informational
   const actionRequiredCount = summary.actionRequired
   const urgentCount = summary.urgent
@@ -393,10 +410,24 @@ function App() {
                 ) : (
                   <ul className="divide-y divide-border-base">
                     {uploads.map((upload) => (
-                      <li key={upload.id} className="py-3 flex items-center justify-between gap-3">
+                      <li
+                          key={upload.id}
+                          onClick={() => !loadingDocId && handleViewDocument(upload)}
+                          className={
+                            'py-3 flex items-center justify-between gap-3 rounded-lg px-2 -mx-2 transition-colors ' +
+                            (loadingDocId === upload.id
+                              ? 'opacity-70'
+                              : loadingDocId
+                              ? 'opacity-50'
+                              : 'cursor-pointer hover:bg-bg-elevated')
+                          }
+                        >
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-text-primary truncate">
+                          <p className="text-sm font-medium text-text-primary truncate flex items-center gap-2">
                             {upload.name}
+                            {loadingDocId === upload.id && (
+                              <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent opacity-60 flex-shrink-0" />
+                            )}
                           </p>
                           <p className="text-xs text-text-muted">
                             {new Date(upload.uploadedAt).toLocaleString()}
