@@ -7,7 +7,7 @@ export const QuotaController = {
     try {
       // Whitelisted users are exempt from quota
       if (config.whitelistedUserIds.includes(req.userId)) {
-        return res.json({ used: 0, limit: null, remaining: Infinity });
+        return res.json({ used: 0, limit: null, remaining: 9999 });
       }
 
       const used = await getUserAnalysisCount(req.userId);
